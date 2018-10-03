@@ -4,6 +4,7 @@
 template <typename G>
 class Node {
     public:
+        //obtener tipos de Graph
         typedef typename G::N N;
         typedef typename G::E E;
         typedef typename G::edge edge;
@@ -12,7 +13,7 @@ class Node {
         EdgeSeq edges;
 
     private:
-        N data;
+        N data; //N es tipo char
         double x;
         double y;
 };

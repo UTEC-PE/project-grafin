@@ -25,11 +25,13 @@ class Graph {
         typedef list<edge*> EdgeSeq;
         typedef typename Tr::N N;
         typedef typename Tr::E E;
+				//Renombrar iteradores
         typedef typename NodeSeq::iterator NodeIte;
         typedef typename EdgeSeq::iterator EdgeIte;
 
     private:
-        NodeSeq nodes;
+        NodeSeq nodes; //Vector de punteros de nodos
+				//Iteradores
         NodeIte ni;
         EdgeIte ei;
 };

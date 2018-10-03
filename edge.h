@@ -6,13 +6,13 @@
 template <typename G>
 class Edge {
     public:
-        typedef typename G::E E;
+        typedef typename G::E E; //saca E de Graph
         typedef typename G::node node;
 
         node* nodes[2];
 
     private:
-        E data;
+        E data; //E es tipo int
         bool dir;
 };
 
