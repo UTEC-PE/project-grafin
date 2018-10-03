@@ -11,7 +11,7 @@ using namespace std;
 
 class Traits {
 	public:
-		typedef char N;
+		typedef int N;
 		typedef int E;
 };
 
@@ -34,6 +34,17 @@ class Graph {
 				//Iteradores
         NodeIte ni;
         EdgeIte ei;
+        int sizeOfGraph;
+	public:
+	Graph(int size):sizeOfGraph(size){
+		node* newnode;
+		for (int i=0;i<size;++i){
+			newnode=new node(i);
+			nodes.push_back(newnode);
+
+		}
+	}
+
 };
 
 typedef Graph<Traits> graph;

@@ -8,7 +8,7 @@ class Edge {
     public:
         typedef typename G::E E; //saca E de Graph
         typedef typename G::node node;
-
+        //entre que nodos esta
         node* nodes[2];
 
     private:

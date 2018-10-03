@@ -14,8 +14,11 @@ class Node {
 
     private:
         N data; //N es tipo char
-        double x;
-        double y;
+        //double x;
+        //double y;
+
+public:
+    Node(N nombre):data(nombre){};
 };
 
 #endif
