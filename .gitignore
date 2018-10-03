@@ -1,0 +1,11 @@
+# For Clion
+cmake-build-debug/
+.idea/
+# For Visual Studio
+.vscode/
+
+# Other files
+.DS_STORE
+test.cpp
+
+*.out
