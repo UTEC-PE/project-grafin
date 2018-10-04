@@ -13,7 +13,17 @@ class Edge {
 
     private:
         E data; //E es tipo int
+        int peso;
         bool dir;
+
+public:
+    Edge(node* Vi,node* Vf,int peso, int dir):peso(peso),dir(dir){
+            nodes[0]=Vi;
+            nodes[1]=Vf;
+    }
+
+
+
 };
 
 #endif

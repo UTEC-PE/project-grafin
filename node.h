@@ -13,12 +13,13 @@ class Node {
         EdgeSeq edges;
 
     private:
-        N data; //N es tipo char
+        N data; //N es tipo  entero
         //double x;
         //double y;
 
 public:
     Node(N nombre):data(nombre){};
+
 };
 
 #endif

@@ -31,11 +31,13 @@ class Graph {
 
     private:
         NodeSeq nodes; //Vector de punteros de nodos
+        EdgeSeq edges;
 				//Iteradores
         NodeIte ni;
         EdgeIte ei;
         int sizeOfGraph;
 	public:
+
 	Graph(int size):sizeOfGraph(size){
 		node* newnode;
 		for (int i=0;i<size;++i){
@@ -43,6 +45,22 @@ class Graph {
 			nodes.push_back(newnode);
 
 		}
+	}
+
+
+	bool add_edge(int Vi,int Vf,int peso, int dir){
+		/*node* initial_node=nodes.at(Vi);
+		node* final_node=nodes.at(Vf);
+		*/
+		if(!(nodes.at(Vf) && nodes.at(Vf)))
+			return false;
+		else{
+			edge* new_edge = new edge(nodes.at(Vi),nodes.at(Vf),peso,dir);
+			edges.push_back(new_edge);
+			return true;
+
+		}
+
 	}
 
 };
