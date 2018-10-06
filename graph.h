@@ -32,7 +32,7 @@ class Graph {
     private:
         NodeSeq nodes; //Vector de punteros de nodos
 				//Iteradores
-        NodeIte ni=nodes.begin();
+        NodeIte ni;
         EdgeIte ei;
         int sizeOfGraph[2]= {0,0}; // sizeOfGraph[0]: # de nodes
 																	 // sizeOfGraph[1]: # de edges
@@ -52,11 +52,23 @@ class Graph {
 		node* initial_node=nodes.at(Vi);
 		node* final_node=nodes.at(Vf);
 
-		if(!(initial_node && final_node))
+		// comprobar que los vertices existan
+		if (!(initial_node && final_node))
 			return false;
 
 		edge* new_edge = new edge(initial_node,nodes[Vf],peso,dir);
-		initial_node->add_edge(new_edge);
+
+		if (initial_node->edges.empty()) { initial_node->edges.push_back(new_edge); ++sizeOfGraph[1]; return true; }
+
+		auto edge_in_edges = initial_node->edges.begin();
+
+		// para mantener los edges ordenados en node.edges
+		while (edge_in_edges!=initial_node->edges.end() && *new_edge>**edge_in_edges) ++edge_in_edges;
+
+		if (*edge_in_edges==*initial_node->edges.end()) initial_node->edges.push_back(new_edge); // el nuevo edge debe ir al final
+		else if (*new_edge==**edge_in_edges) return false; 					// hay otro edge con un mismo inicio y fin
+		else initial_node->edges.insert(edge_in_edges, new_edge);
+
 		++sizeOfGraph[1];
 		return true;
 	}

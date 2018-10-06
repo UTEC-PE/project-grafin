@@ -22,6 +22,19 @@ public:
             nodes[1]=Vf;
     }
 
+    bool operator==(Edge<G> cmp){
+      return nodes[0] == cmp.nodes[0] &&
+             nodes[1] == cmp.nodes[1];
+    }
+
+    bool operator>(Edge<G> cmp){
+      return nodes[1]>cmp.nodes[1];
+    }
+
+    bool operator<(Edge<G> cmp){
+      return nodes[1]<cmp.nodes[1];
+    }
+
 
 
 };

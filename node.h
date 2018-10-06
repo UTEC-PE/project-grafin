@@ -20,7 +20,6 @@ class Node {
         EdgeSeq edges;
 
         Node(N nombre):data(nombre){};
-        void add_edge(edge* e){ edges.push_back(e); };
         // Métodos de acceso
         N get_data(){ return data; }
 
