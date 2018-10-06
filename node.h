@@ -10,15 +10,19 @@ class Node {
         typedef typename G::edge edge;
         typedef typename G::EdgeSeq EdgeSeq;
 
-        EdgeSeq edges;
 
     private:
         N data; //N es tipo  entero
         //double x;
         //double y;
 
-public:
-    Node(N nombre):data(nombre){};
+    public:
+        EdgeSeq edges;
+
+        Node(N nombre):data(nombre){};
+        void add_edge(edge* e){ edges.push_back(e); };
+        // Métodos de acceso
+        N get_data(){ return data; }
 
 };
 

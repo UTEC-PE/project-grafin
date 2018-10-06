@@ -31,38 +31,47 @@ class Graph {
 
     private:
         NodeSeq nodes; //Vector de punteros de nodos
-        EdgeSeq edges;
 				//Iteradores
-        NodeIte ni;
+        NodeIte ni=nodes.begin();
         EdgeIte ei;
-        int sizeOfGraph;
-	public:
+        int sizeOfGraph[2]= {0,0}; // sizeOfGraph[0]: # de nodes
+																	 // sizeOfGraph[1]: # de edges
 
-	Graph(int size):sizeOfGraph(size){
+	public:
+	Graph(int size) {
+		sizeOfGraph[0] = size;
 		node* newnode;
 		for (int i=0;i<size;++i){
 			newnode=new node(i);
 			nodes.push_back(newnode);
-
 		}
 	}
 
 
-	bool add_edge(int Vi,int Vf,int peso, int dir){
-		/*node* initial_node=nodes.at(Vi);
+	bool add_edge(int Vi, int Vf, int peso, int dir){
+		node* initial_node=nodes.at(Vi);
 		node* final_node=nodes.at(Vf);
-		*/
-		if(!(nodes.at(Vf) && nodes.at(Vf)))
+
+		if(!(initial_node && final_node))
 			return false;
-		else{
-			edge* new_edge = new edge(nodes.at(Vi),nodes.at(Vf),peso,dir);
-			edges.push_back(new_edge);
-			return true;
 
-		}
-
+		edge* new_edge = new edge(initial_node,nodes[Vf],peso,dir);
+		initial_node->add_edge(new_edge);
+		++sizeOfGraph[1];
+		return true;
 	}
 
+	int* size(){ return sizeOfGraph; }
+
+	// Solo para debugging
+	void print(){
+		for (int i=0; i<nodes.size(); ++i){
+			cout<< "\nNodo " << i << ": ";
+			for (auto it=nodes[i]->edges.begin(); it!=nodes[i]->edges.end(); it++){
+				cout << (*it)->nodes[1]->get_data() << " ";
+			}
+		}
+	}
 };
 
 typedef Graph<Traits> graph;
