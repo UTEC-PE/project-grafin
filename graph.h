@@ -48,7 +48,7 @@ class Graph {
 	}
 
 
-	bool add_edge(int Vi, int Vf, int peso, int dir){
+	bool add_edge(int Vi, int Vf, int peso, bool dir, bool recursive=false){
 		node* initial_node=nodes.at(Vi);
 		node* final_node=nodes.at(Vf);
 
@@ -56,9 +56,13 @@ class Graph {
 		if (!(initial_node && final_node))
 			return false;
 
+		// si el edge no tiene direccion, no hay nodo final ni inicial
+		// (debe agregarse en la lista de edges de ambos nodos)
+		if (!dir && !recursive) add_edge(Vf, Vi, peso, false, true);
+
 		edge* new_edge = new edge(initial_node,nodes[Vf],peso,dir);
 
-		if (initial_node->edges.empty()) { initial_node->edges.push_back(new_edge); ++sizeOfGraph[1]; return true; }
+		if (initial_node->edges.empty()) { initial_node->edges.push_back(new_edge); sizeOfGraph[1]+=1*recursive; return true; }
 
 		auto edge_in_edges = initial_node->edges.begin();
 
@@ -69,7 +73,8 @@ class Graph {
 		else if (*new_edge==**edge_in_edges) return false; 					// hay otro edge con un mismo inicio y fin
 		else initial_node->edges.insert(edge_in_edges, new_edge);
 
-		++sizeOfGraph[1];
+		// si se esta agregando un edge compartido (sin direccion), no aumentar
+		sizeOfGraph[1]+=1*recursive;
 		return true;
 	}
 
