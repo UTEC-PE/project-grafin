@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <list>
+#include <algorithm> 
 
 #include "node.h"
 #include "edge.h"
@@ -31,7 +32,7 @@ class Graph {
 
     private:
         NodeSeq nodes; //Vector de punteros de nodos
-				//Iteradores
+					   //Iteradores
         NodeIte ni;
         EdgeIte ei;
         int sizeOfGraph[2]= {0,0}; // sizeOfGraph[0]: # de nodes
@@ -45,6 +46,14 @@ class Graph {
 			newnode=new node(i);
 			nodes.push_back(newnode);
 		}
+	}
+	Graph(){};
+
+	bool add_node(N data){
+		if (find(nodes.begin(), nodes.end(), data)) return false; //el nombre ya está tomado
+		//TODO: Mantener el vector de nodos ordenado
+		//		Convertir el vector de nodos a map
+		//		Aceptar un add_node() sin parámetros que continue la secuencia de nodos
 	}
 
 
@@ -89,6 +98,7 @@ class Graph {
 			}
 		}
 	}
+
 };
 
 typedef Graph<Traits> graph;
