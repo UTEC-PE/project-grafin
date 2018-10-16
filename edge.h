@@ -27,12 +27,14 @@ public:
              nodes[1] == cmp.nodes[1];
     }
 
-    bool operator>(Edge<G> cmp){
-      return nodes[1]>cmp.nodes[1];
+    //Comparar por peso
+    //Si son iguales, comparar por el valor de nodos
+    bool operator>(Edge<G> cmp) const{
+      return cmp.peso==peso? nodes[1]>cmp.nodes[1] : peso>cmp.peso;
     }
 
-    bool operator<(Edge<G> cmp){
-      return nodes[1]<cmp.nodes[1];
+    bool operator<(Edge<G> cmp) const{
+     return cmp.peso==peso? nodes[1]<cmp.nodes[1] : peso<cmp.peso;
     }
 
 
