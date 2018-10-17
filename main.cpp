@@ -19,8 +19,22 @@ int main(int argc, char *argv[]) {
    graph minimalTree = mygraph.kruskalAlgorithm();
    minimalTree.print();
    cout << "\n\nNumber of nodes: " << minimalTree.size()[0];
-   cout << "\nNumber of edges: " << minimalTree.size()[1];
+   cout << "\nNumber of edges: " << minimalTree.size()[1]<<endl;
 
+
+   cout<<"ejemplo2: "<<endl;
+   graph mygraph2(5);
+   mygraph2.add_edge(4,3,9,0);
+   mygraph2.add_edge(0,1,11,0);
+   mygraph2.add_edge(2,1,9,0);
+   mygraph2.add_edge(0,2,10,0);
+   mygraph2.add_edge(0,3,7,0);
+
+   mygraph2.print();
+
+   cout<<"after print"<<endl;
+
+   mygraph2.DFS(4);
 
     return EXIT_SUCCESS;
 }
