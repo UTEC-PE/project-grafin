@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include <algorithm> 
+#include <numeric>
 
 #include "node.h"
 #include "edge.h"
@@ -35,9 +36,21 @@ class Graph {
 					   //Iteradores
         NodeIte ni;
         EdgeIte ei;
-        int sizeOfGraph[2]= {0,0}; // sizeOfGraph[0]: # de nodes
-																	 // sizeOfGraph[1]: # de edges
+        int sizeOfGraph[2]= {0,0}; // sizeOfGraph[0]: # de nodes							// sizeOfGraph[1]: # de edges
+        void add_edge(edge someedge){
+        	add_edge(someedge.nodes[0]->get_data(), someedge.nodes[1]->get_data(), 
+        		someedge.get_peso(), someedge.get_dir());
+        }
 
+    //TODO: Es bueno que un constructor este en private?
+    Graph(NodeSeq somenodes){ // Nuevo grafo a partir de data de vector de nodos
+    	node* newnode;
+    	for (node* pnodes : somenodes){
+        		newnode = new node(pnodes->get_data());
+        		nodes.push_back(newnode);
+        		++sizeOfGraph[0];
+        	}
+    };
 	public:
 	Graph(int size) {
 		sizeOfGraph[0] = size;
@@ -97,6 +110,40 @@ class Graph {
 				cout << (*it)->nodes[1]->get_data() << " ";
 			}
 		}
+	}
+
+	self kruskalAlgorithm(){
+		vector<edge> sortedEdges;
+		//Iterate through array
+		//	Iterate through edges
+		//	Add edges (not pointers)
+		for (auto it=nodes.begin(); it!=nodes.end(); ++it)
+			for (auto edgeit=(*it)->edges.begin(); edgeit!=(*it)->edges.end(); ++edgeit){
+				sortedEdges.push_back(**edgeit);
+			}
+		sort(sortedEdges.begin(), sortedEdges.end());
+
+		vector<N> disjointSet(nodes.size());
+		iota(disjointSet.begin(), disjointSet.end(), 0); // Make sets (iota rellena con secuencia)
+		self minimalTree(this->nodes);
+
+		// TODO: Hacer que disjointSet funcione con ids y no solo si la posición
+		//		 del nodo es igual a su data
+		for (edge theedge : sortedEdges){
+			int disjointElementSet0 = disjointSet[theedge.nodes[0]->get_data()];
+			int disjointElementSet1 = disjointSet[theedge.nodes[1]->get_data()];
+
+			if (disjointElementSet0!=disjointElementSet1){ // Find
+				minimalTree.add_edge(theedge);
+
+				// TODO: Tratar de encontrar una manera menos 'verbosa'
+				if (disjointElementSet0<disjointElementSet1) // Union (el mayor set se mergea al menor)
+					disjointSet[disjointElementSet1]=disjointElementSet0;
+				else
+					disjointSet[disjointElementSet0]=disjointElementSet1;
+			}
+		}
+		return minimalTree;
 	}
 
 };
