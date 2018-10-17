@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <list>
+#include <iostream>
 
 #include "node.h"
 #include "edge.h"
@@ -88,6 +89,34 @@ class Graph {
 				cout << (*it)->nodes[1]->get_data() << " ";
 			}
 		}
+	}
+
+
+
+
+	void AristaConMenorPeso(node* nodo_actual,int &a, int &b){
+	//a el inicio
+	//b el final de la arista
+			//vertice por donde empieza prim
+			node* first=nodes.at(nodo_actual);
+			edge** menor= nullptr;
+			a=first->get_data();
+			b=-1;
+
+
+			//ver cual que arista es la de menor peso
+			for (auto it=first->edges.begin(); it!=first->edges.end(); it++){
+				cout << "peso"<<(*it)->get_peso()<<endl;
+				if(menor== nullptr){
+					menor= &(*it);
+				}else if((*it)->get_peso() < (*menor)->get_peso()){
+					menor=&(*it);
+				}
+
+			}
+		
+			b=menor->get_data();
+
 	}
 };
 
