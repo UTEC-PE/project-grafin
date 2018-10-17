@@ -22,6 +22,8 @@ public:
             nodes[1]=Vf;
     }
 
+    int get_peso(){ return peso; }
+    bool get_dir(){ return dir; }
     bool operator==(Edge<G> cmp){
       return nodes[0] == cmp.nodes[0] &&
              nodes[1] == cmp.nodes[1];
@@ -36,9 +38,6 @@ public:
     bool operator<(Edge<G> cmp) const{
      return cmp.peso==peso? nodes[1]<cmp.nodes[1] : peso<cmp.peso;
     }
-
-
-
 };
 
 #endif
