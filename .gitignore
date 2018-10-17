@@ -11,3 +11,4 @@ CMakeLists.txt
 test.cpp
 
 *.out
+main
