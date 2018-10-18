@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
    cout<<"Print: "<<endl;
    mygraph2.print();
    cout<<endl<<"DFS: "<<endl;
-   mygraph2.DFS(4);
+   mygraph2.DFS(3);
 
 
 

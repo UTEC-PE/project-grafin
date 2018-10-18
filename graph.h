@@ -149,7 +149,8 @@ class Graph {
 	}
 
 	//busqueda por profundidad
-	self DFS(int nodo_data_inicial, bool return_size=false){
+
+	N DFS(int nodo_data_inicial, bool return_size=false){
 		node* nodo_inicial= nodes.at(nodo_data_inicial);
 	    node* actual;
 		stack<node*> pila_stack;
