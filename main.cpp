@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <list>
 #include "graph.h"
 
 using namespace std;
@@ -29,12 +29,12 @@ int main(int argc, char *argv[]) {
    mygraph2.add_edge(2,1,9,0);
    mygraph2.add_edge(0,2,10,0);
    mygraph2.add_edge(0,3,7,0);
-
+   cout<<"Print: "<<endl;
    mygraph2.print();
-
-   cout<<"after print"<<endl;
-
+   cout<<endl<<"DFS: "<<endl;
    mygraph2.DFS(4);
+
+
 
     return EXIT_SUCCESS;
 }

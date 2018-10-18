@@ -149,7 +149,7 @@ class Graph {
 	}
 
 	//busqueda por profundidad
-	void DFS(int nodo_data_inicial){
+	self DFS(int nodo_data_inicial, bool return_size=false){
 		node* nodo_inicial= nodes.at(nodo_data_inicial);
 	    node* actual;
 		stack<node*> pila_stack;
@@ -171,7 +171,9 @@ class Graph {
 			}
 			//si no encontramos la arista, la agregamos a la lista de visitados, la imprimimos y la recorremos
 			if(thereis==false){
-				cout<<actual->get_data()<<" - ";
+			    if(return_size==false) {
+                    cout << actual->get_data() << " - ";
+                }
 				lista.push_back(actual);
 
 				edge *auxedge;
@@ -190,18 +192,13 @@ class Graph {
 						if(thereis2==false) {
 							pila_stack.push(auxedge->nodes[1]);
 						}
-
-
 					}
-
-
-
-
 			}
-
-
-
 		}
+		if(return_size==true){
+		    return lista.size();
+		}
+
 
 	}
 
