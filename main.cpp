@@ -41,12 +41,15 @@ int main(int argc, char *argv[]) {
    mygraph2.DFS(0);
    cout<<"conexo: "<<mygraph2.isconexo()<<endl;
    cout<<"fuertemente conexo:"<<mygraph2.is_fuertemente_conexo();
-
-   cout<<"Print: "<<endl;
-   mygraph2.print();
    cout<<"BFS"<<endl;
-   mygraph2.BFS(0);
+   vector <int> showlist;
+   showlist=mygraph2.ChangeNododirToData(mygraph2.BFS(0));
+
+   for(int i=0;i<showlist.size();++i){
+      cout<<showlist[i]<<" - ";
+   }
 
 
     return EXIT_SUCCESS;
 }
+
