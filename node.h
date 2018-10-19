@@ -9,8 +9,6 @@ class Node {
         typedef typename G::E E;
         typedef typename G::edge edge;
         typedef typename G::EdgeSeq EdgeSeq;
-
-
     private:
         N data; //N es tipo  entero
         //double x;
@@ -20,6 +18,17 @@ class Node {
         EdgeSeq edges;
 
         Node(N nombre):data(nombre){};
+
+        int gradoEntrada=0;
+        int gradoSalida=0;
+
+        // 0 fuente (entrada)
+        // 1 hundido (salida)
+        // 2 no tiene tipo
+        int get_tipo(){
+            return (!gradoEntrada == !gradoSalida) ? 2 : !gradoEntrada;
+        }
+
         // Métodos de acceso
         N get_data(){ return data; }
 

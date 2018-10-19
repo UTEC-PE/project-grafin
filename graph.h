@@ -84,20 +84,26 @@ class Graph {
 
 		edge* new_edge = new edge(initial_node,nodes[Vf],peso,dir);
 
-		if (initial_node->edges.empty()) { initial_node->edges.push_back(new_edge); sizeOfGraph[1]+=1*recursive; return true; }
-
 		auto edge_in_edges = initial_node->edges.begin();
 
 		// para mantener los edges ordenados en node.edges
 		while (edge_in_edges!=initial_node->edges.end() && *new_edge>**edge_in_edges) ++edge_in_edges;
 
-		if (*edge_in_edges==*initial_node->edges.end()) initial_node->edges.push_back(new_edge); // el nuevo edge debe ir al final
+		if (initial_node->edges.empty() || *edge_in_edges==*initial_node->edges.end()) initial_node->edges.push_back(new_edge); // el nuevo edge debe ir al final
 		else if (*new_edge==**edge_in_edges) return false; 					// hay otro edge con un mismo inicio y fin
 		else initial_node->edges.insert(edge_in_edges, new_edge);
 
+		// aumentar grado
+		++initial_node->gradoEntrada;
+		++final_node->gradoSalida;
+
 		// si se esta agregando un edge compartido (sin direccion), no aumentar
-		sizeOfGraph[1]+=1*recursive;
+		sizeOfGraph[1]+=1*!recursive;
 		return true;
+	}
+
+	int get_tipo(N name){
+		return nodes[name]->get_tipo();
 	}
 
 	int* size(){ return sizeOfGraph; }
@@ -108,6 +114,20 @@ class Graph {
 			cout<< "\nNodo " << i << ": ";
 			for (auto it=nodes[i]->edges.begin(); it!=nodes[i]->edges.end(); it++){
 				cout << (*it)->nodes[1]->get_data() << " ";
+			}
+		}
+	}
+
+	void print_degrees(){
+		cout <<"\n\t\t\tGE" <<"\tGS"<<"\tTipo";
+		for (int i=0; i<nodes.size(); ++i){
+			cout<< "\nNodo " << i << ":";
+			cout<<"\t\t"<<nodes[i]->gradoEntrada;
+			cout<<"\t"<<nodes[i]->gradoSalida;
+			switch(nodes[i]->get_tipo()){
+				case 0:  cout<<"\tFuente"; break;
+				case 1:  cout<<"\tHundido"; break;
+				case 2:  cout<<"\tNada";
 			}
 		}
 	}
