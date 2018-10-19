@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
    mygraph2.print();
    cout<<endl<<"DFS: "<<endl;
    mygraph2.DFS(0);
+   cout<<"conexo: "<<mygraph2.isconexo();
 
 
 

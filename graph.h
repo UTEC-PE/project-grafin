@@ -38,6 +38,7 @@ class Graph {
 					   //Iteradores
         NodeIte ni;
         EdgeIte ei;
+        bool have_direction;
         int sizeOfGraph[2]= {0,0}; // sizeOfGraph[0]: # de nodes							// sizeOfGraph[1]: # de edges
         void add_edge(edge someedge){
         	add_edge(someedge.nodes[0]->get_data(), someedge.nodes[1]->get_data(), 
@@ -52,6 +53,7 @@ class Graph {
         		nodes.push_back(newnode);
         		++sizeOfGraph[0];
         	}
+        	have_direction=false;
     };
 	public:
 	Graph(int size) {
@@ -82,7 +84,10 @@ class Graph {
 
 		// si el edge no tiene direccion, no hay nodo final ni inicial
 		// (debe agregarse en la lista de edges de ambos nodos)
-		if (!dir && !recursive) add_edge(Vf, Vi, peso, false, true);
+		if (!dir && !recursive) {
+            add_edge(Vf, Vi, peso, false, true);
+        }
+        if(dir==true) this->have_direction = true;
 
 		edge* new_edge = new edge(initial_node,nodes[Vf],peso,dir);
 
@@ -206,6 +211,17 @@ class Graph {
 		return EXIT_SUCCESS;
 	}
 
+	bool isconexo(){
+        if(!have_direction) {
+            return (nodes.size() == DFS(nodes[0]->get_data(), true));
+        }
+        else{
+            for(auto it=nodes.begin(); it!=nodes.end(); ++it){
+                if(DFS((*it)->get_data(),true) == nodes.size()) return true;
+            }
+            return false;
+        }
+	}
 };
 
 typedef Graph<Traits> graph;
