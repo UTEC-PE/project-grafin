@@ -222,6 +222,18 @@ class Graph {
             return false;
         }
 	}
+
+	bool is_fuertemente_conexo(){
+        if(!have_direction) {
+            return (nodes.size() == DFS(nodes[0]->get_data(), true));
+        }
+        else{
+            for(auto it=nodes.begin(); it!=nodes.end(); ++it){
+                if(DFS((*it)->get_data(),true) != nodes.size()) return false;
+            }
+            return true;
+        }
+	}
 };
 
 typedef Graph<Traits> graph;
