@@ -203,8 +203,8 @@ class Graph {
 			for(auto it=lista.begin(); it!=lista.end();++it){
 				if(*it==actual){
 					thereis=true;
+					break;
 				}
-
 			}
 			//si no encontramos la arista, la agregamos a la lista de visitados, la imprimimos y la recorremos
 			if(!thereis){
@@ -218,8 +218,6 @@ class Graph {
 						bool thereis2=false;
 
 						for(auto it=lista.begin(); it!=lista.end();it++){
-
-
                             if((*it)==auxedge->nodes[1]){
 								thereis2=true;
 							}
@@ -234,28 +232,40 @@ class Graph {
 		}
 		return lista;
 	}
-
+//no dir
 	bool isconexo(){
         if(!has_direction) {
             return (nodes.size() == (DFS (nodes[0]->get_data())).size());
         }
         else{
+            /*
             for(auto it=nodes.begin(); it!=nodes.end(); ++it){
                 if((DFS((*it)->get_data())).size() == nodes.size()) return true;
             }
+             */
             return false;
         }
 	}
-
-	bool is_fuertemente_conexo(){
-        if(!has_direction) {
-            return (nodes.size() == (DFS (nodes[0]->get_data())).size());
+    bool is_completo(){
+        int numero_all_ady=nodes.size() -1;
+        for(auto it=nodes.begin();it!=nodes.end();++it){
+            if((*it)->gradoEntrada != numero_all_ady){
+                return false;
+            }
         }
-        else{
+        return true;
+	}
+
+	//dirc
+	bool is_fuertemente_conexo(){
+        if(has_direction) {
             for(auto it=nodes.begin(); it!=nodes.end(); ++it){
-                if((DFS((*it)->get_data())).size() != nodes.size()) return false;
+                if( (DFS((*it)->get_data())).size() != nodes.size()) return false;
             }
             return true;
+        }
+        else{
+            return false;
         }
     }
 
