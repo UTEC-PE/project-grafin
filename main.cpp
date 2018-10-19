@@ -5,6 +5,7 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
+   cout << "------------- Graph test 1 (Directed) -------------\n";
    graph mygraph(11);
    mygraph.add_edge(4,6,10,1);
    mygraph.add_edge(4,7,10,1);
@@ -25,7 +26,7 @@ int main(int argc, char *argv[]) {
    cout << "\nNumber of edges: " << minimalTree.size()[1]<<endl;
 
 
-   cout<<"ejemplo2: "<<endl;
+   cout << "\n\n------------- Graph test 2 (Undirected) -------------\n";
    graph mygraph2(8);
    mygraph2.add_edge(0,2,9,0);
    mygraph2.add_edge(0,1,9,0);
@@ -34,21 +35,25 @@ int main(int argc, char *argv[]) {
    mygraph2.add_edge(2,6,7,0);
    mygraph2.add_edge(5,2,7,0);
    mygraph2.add_edge(6,7,7,0);
-
-   cout<<"Print: "<<endl;
    mygraph2.print();
-   cout<<endl<<"DFS: "<<endl;
-   mygraph2.DFS(0);
-   cout<<"conexo: "<<mygraph2.isconexo()<<endl;
-   cout<<"fuertemente conexo:"<<mygraph2.is_fuertemente_conexo();
-   cout<<"BFS"<<endl;
-   vector <int> showlist;
-   showlist=mygraph2.ChangeNododirToData(mygraph2.BFS(0));
 
+   cout<<"\n\nDFS (desde nodo 0): ";
+   vector <int> showlist;
+   showlist=mygraph2.ChangeNododirToData(mygraph2.DFS(0));
    for(int i=0;i<showlist.size();++i){
       cout<<showlist[i]<<" - ";
    }
 
+   showlist.empty();
+   cout<<"\n\nBFS (desde nodo 0): ";
+   showlist=mygraph2.ChangeNododirToData(mygraph2.BFS(0));
+   for(int i=0;i<showlist.size();++i){
+      cout<<showlist[i]<<" - ";
+   }
+
+   cout<<"\n\nConexo: "<<mygraph2.isconexo()<<endl;
+   cout<<"\nFuertemente conexo (0 undirected) : "<<mygraph2.is_fuertemente_conexo();
+   cout<<"\nCompleto: "<<mygraph2.is_completo();
 
     return EXIT_SUCCESS;
 }
