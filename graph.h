@@ -203,8 +203,8 @@ class Graph {
 			for(auto it=lista.begin(); it!=lista.end();++it){
 				if(*it==actual){
 					thereis=true;
+					break;
 				}
-
 			}
 			//si no encontramos la arista, la agregamos a la lista de visitados, la imprimimos y la recorremos
 			if(!thereis){
@@ -218,8 +218,6 @@ class Graph {
 						bool thereis2=false;
 
 						for(auto it=lista.begin(); it!=lista.end();it++){
-
-
                             if((*it)==auxedge->nodes[1]){
 								thereis2=true;
 							}
@@ -249,7 +247,14 @@ class Graph {
 
 	bool is_fuertemente_conexo(){
         if(!has_direction) {
-            return (nodes.size() == (DFS (nodes[0]->get_data())).size());
+            int numero_all_ady=nodes.size() == (DFS (nodes[0]->get_data())).size() -1;
+            for(auto it=nodes.begin();it!=nodes.end();++it){
+                if((*it)->gradoEntrada != numero_all_ady){
+                    return false;
+                }
+            }
+
+            return true;
         }
         else{
             for(auto it=nodes.begin(); it!=nodes.end(); ++it){
