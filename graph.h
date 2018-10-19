@@ -150,7 +150,7 @@ class Graph {
 
 	//busqueda por profundidad
 
-	N DFS(int nodo_data_inicial, bool return_size=false){
+	int DFS(int nodo_data_inicial, bool return_size=false){
 		node* nodo_inicial= nodes.at(nodo_data_inicial);
 	    node* actual;
 		stack<node*> pila_stack;
@@ -164,43 +164,46 @@ class Graph {
 			actual= pila_stack.top();
 			pila_stack.pop();
 
+
 			//recoremos todas las aristas del nodo actual para ver si ya esta en la lista de visitados
-			for(auto it=lista.begin(); it!=lista.end();it++){
+			for(auto it=lista.begin(); it!=lista.end();++it){
 				if(*it==actual){
 					thereis=true;
 				}
+
 			}
 			//si no encontramos la arista, la agregamos a la lista de visitados, la imprimimos y la recorremos
-			if(thereis==false){
-			    if(return_size==false) {
-                    cout << actual->get_data() << " - ";
-                }
+			if(!thereis){
 				lista.push_back(actual);
+				if(!return_size) {
+					cout  << actual->get_data() << " -> ";
 
+				}
 				edge *auxedge;
 
 				//recoremos las aristas
 					for (auto it2=actual->edges.begin(); it2!=actual->edges.end(); it2++){
 						auxedge=(*it2);
 						bool thereis2=false;
+
 						for(auto it=lista.begin(); it!=lista.end();it++){
 
 
-							if((*it)==auxedge->nodes[1]){
+                            if((*it)==auxedge->nodes[1]){
 								thereis2=true;
 							}
+
 						}
-						if(thereis2==false) {
+						if(!thereis2) {
 							pila_stack.push(auxedge->nodes[1]);
 						}
 					}
+
 			}
 		}
-		if(return_size==true){
-		    return lista.size();
-		}
-
-
+		if(return_size){
+			return lista.size(); }
+		return EXIT_SUCCESS;
 	}
 
 };

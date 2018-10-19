@@ -23,16 +23,19 @@ int main(int argc, char *argv[]) {
 
 
    cout<<"ejemplo2: "<<endl;
-   graph mygraph2(5);
-   mygraph2.add_edge(4,3,9,0);
-   mygraph2.add_edge(0,1,11,0);
-   mygraph2.add_edge(2,1,9,0);
-   mygraph2.add_edge(0,2,10,0);
-   mygraph2.add_edge(0,3,7,0);
+   graph mygraph2(8);
+   mygraph2.add_edge(0,2,9,0);
+   mygraph2.add_edge(0,1,9,0);
+   mygraph2.add_edge(1,3,11,0);
+   mygraph2.add_edge(1,4,9,0);
+   mygraph2.add_edge(2,6,7,0);
+   mygraph2.add_edge(5,2,7,0);
+   mygraph2.add_edge(6,7,7,0);
+
    cout<<"Print: "<<endl;
    mygraph2.print();
    cout<<endl<<"DFS: "<<endl;
-   mygraph2.DFS(3);
+   mygraph2.DFS(0);
 
 
 
