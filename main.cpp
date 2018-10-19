@@ -42,6 +42,10 @@ int main(int argc, char *argv[]) {
    cout<<"conexo: "<<mygraph2.isconexo()<<endl;
    cout<<"fuertemente conexo:"<<mygraph2.is_fuertemente_conexo();
 
+   cout<<"Print: "<<endl;
+   mygraph2.print();
+   cout<<"BFS"<<endl;
+   mygraph2.BFS(0);
 
 
     return EXIT_SUCCESS;

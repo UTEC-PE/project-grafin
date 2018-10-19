@@ -7,6 +7,7 @@
 #include <numeric>
 #include <stack>
 #include <iostream>
+#include <queue>
 
 #include "node.h"
 #include "edge.h"
@@ -184,7 +185,6 @@ class Graph {
 	}
 
 	//busqueda por profundidad
-
 	int DFS(int nodo_data_inicial, bool return_size=false){
 		node* nodo_inicial= nodes.at(nodo_data_inicial);
 	    node* actual;
@@ -194,7 +194,6 @@ class Graph {
 		pila_stack.push(nodo_inicial);
 		//cuado el stack esta vacio ya no habra mas nodos por visitar
 		while(!pila_stack.empty()){
-
 			bool thereis=false;
 			actual= pila_stack.top();
 			pila_stack.pop();
@@ -236,9 +235,7 @@ class Graph {
 
 			}
 		}
-		if(return_size){
-			return lista.size(); }
-		return EXIT_SUCCESS;
+		return lista.size();
 	}
 
 	bool isconexo(){
@@ -263,6 +260,46 @@ class Graph {
             }
             return true;
         }
+    }
+
+	void BFS(int dataof){
+	    node* nodo_inicial=nodes.at(dataof);
+	    list<node*> lista;
+	    queue<node*> queue_cola;
+        queue_cola.push(nodo_inicial);
+        node* actual;
+
+	    while(!queue_cola.empty()){
+	        actual=queue_cola.front();
+	        bool thereis=false;
+	        queue_cola.pop();
+
+	        for(auto it=lista.begin();it!=lista.end();++it){
+	            if(*it ==actual){
+	                thereis=true;
+                    break;
+	            }
+	        }
+
+	        if(!thereis){
+	            cout<<actual->get_data()<<" - ";
+	            lista.push_back(actual);
+                edge* auxedge;
+	            for(auto it=actual->edges.begin();it!=actual->edges.end();++it){
+	                auxedge=(*it);
+	                bool thereis2=false;
+                    for(auto it2=lista.begin();it2!=lista.end();++it2){
+                        if((*it2)==auxedge->nodes[1]){
+                            thereis2=true;
+                            break;
+                        }
+                    }
+                    if(!thereis2){
+                        queue_cola.push(auxedge->nodes[1]);
+                    }
+	            }
+	        }
+	    }
 	}
 };
 
