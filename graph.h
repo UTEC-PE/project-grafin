@@ -8,6 +8,7 @@
 #include <stack>
 #include <iostream>
 #include <queue>
+#include <map>
 
 #include "node.h"
 #include "edge.h"
@@ -19,49 +20,60 @@ class Traits {
 		typedef int N;
 		typedef int E;
 };
+
 template <typename Tr>
 class Graph {
     public:
+    	typedef typename Tr::N N;
+        typedef typename Tr::E E;
         typedef Graph<Tr> self;
         typedef Node<self> node;
         typedef Edge<self> edge;
-        typedef vector<node*> NodeSeq;
+        typedef map<N, node*> NodeSeq;
         typedef list<node*> NodeList;
         typedef list<edge*> EdgeSeq;
-        typedef typename Tr::N N;
-        typedef typename Tr::E E;
 				//Renombrar iteradores
         typedef typename NodeSeq::iterator NodeIte;
         typedef typename EdgeSeq::iterator EdgeIte;
 
     private:
-        NodeSeq nodes; //Vector de punteros de nodos
+        NodeSeq nodes; //Mapa de punteros de nodos <data (node name), node pointer>
 					   //Iteradores
         NodeIte ni;
         EdgeIte ei;
         bool has_direction=false;
         int sizeOfGraph[2]= {0,0}; // sizeOfGraph[0]: # de nodes							// sizeOfGraph[1]: # de edges
         void add_edge(edge someedge){
-        	add_edge(someedge.nodes[0]->get_data(), someedge.nodes[1]->get_data(), 
-        		someedge.get_peso(), someedge.get_dir());
+        	add_edge(someedge.nodes[0]->get_data(), someedge.nodes[1]->get_data(), someedge.get_peso(), someedge.get_dir());
         }
 
     //TODO: Es bueno que un constructor este en private?
     Graph(NodeSeq somenodes){ // Nuevo grafo a partir de data de vector de nodos
     	node* newnode;
-    	for (node* pnodes : somenodes){
-        		newnode = new node(pnodes->get_data());
-        		nodes.push_back(newnode);
+    	for (auto pairNodes : somenodes){
+        		newnode = new node(pairNodes.first);
+        		nodes.insert(pair <N, node*> (pairNodes.first, newnode));
         		++sizeOfGraph[0];
         	}
     };
 	public:
-	Graph(int size) {
+	Graph(int size) : Graph(size, is_arithmetic<N>{}){}
+
+	Graph(int size, true_type) { // int, float, char
 		sizeOfGraph[0] = size;
 		node* newnode;
-		for (int i=0;i<size;++i){
+		N i=65*(sizeof(N)==1);
+		for (;i<size;++i){
 			newnode=new node(i);
-			nodes.push_back(newnode);
+			nodes.insert(pair <N, node*> (i, newnode));
+		}
+	}
+	Graph(int size, false_type) { // string
+		sizeOfGraph[0] = size;
+		node* newnode;
+		for (char i=0;i<size;++i){
+			newnode=new node(i);
+			nodes.insert(pair <N, node*> (string(1, i), newnode));
 		}
 	}
 	Graph(){};
@@ -75,24 +87,24 @@ class Graph {
 		return cota<this->density();
 	}
 
-	bool add_node(N data){
-		if (find(nodes.begin(), nodes.end(), data)) return false; //el nombre ya está tomado
+	// bool add_node(N data){
+	// 	if (find(nodes.begin(), nodes.end(), data)) return false; //el nombre ya está tomado
 		//TODO: Mantener el vector de nodos ordenado
 		//		Convertir el vector de nodos a map
 		//		Aceptar un add_node() sin parámetros que continue la secuencia de nodos
-	}
+	//}
 
 
-	bool add_edge(int Vi, int Vf, E peso, bool dir, bool recursive=false){
+	bool add_edge(N Vi, N Vf, E peso, bool dir, bool recursive=false){
 		//TODO: Crear subclases de grafo para dirigido y no dirigido
 		has_direction = dir;
 
-		node* initial_node=nodes.at(Vi);
-		node* final_node=nodes.at(Vf);
-
 		// comprobar que los vertices existan
-		if (!(initial_node && final_node))
+		if (!(nodes.count(Vi) && nodes.count(Vf)))
 			return false;
+
+		node* initial_node=nodes[Vi];
+		node* final_node=nodes[Vf];
 
 		// si el edge no tiene direccion, no hay nodo final ni inicial
 		// (debe agregarse en la lista de edges de ambos nodos)
@@ -100,7 +112,7 @@ class Graph {
             add_edge(Vf, Vi, peso, false, true);
         }
 
-		edge* new_edge = new edge(initial_node,nodes[Vf],peso,dir);
+		edge* new_edge = new edge(initial_node,final_node,peso,dir);
 
 		auto edge_in_edges = initial_node->edges.begin();
 
@@ -128,21 +140,21 @@ class Graph {
 
 	// Solo para debugging
 	void print(){
-		for (int i=0; i<nodes.size(); ++i){
-			cout<< "\nNodo " << i << ": ";
-			for (auto it=nodes[i]->edges.begin(); it!=nodes[i]->edges.end(); it++){
-				cout << (*it)->nodes[1]->get_data() << " ";
+		for (auto& thenode : nodes){
+			cout<< "\nNodo " << thenode.first << ": ";
+			for (auto& theedge : thenode.second->edges){
+				cout << theedge->nodes[1]->get_data() << " ";
 			}
 		}
 	}
 
 	void print_degrees(){
 		cout <<"\n\t\t\tGE" <<"\tGS"<<"\tTipo";
-		for (int i=0; i<nodes.size(); ++i){
-			cout<< "\nNodo " << i << ":";
-			cout<<"\t\t"<<nodes[i]->gradoEntrada;
-			cout<<"\t"<<nodes[i]->gradoSalida;
-			switch(nodes[i]->get_tipo()){
+		for (auto& thenode : nodes){
+			cout<< "\nNodo " << thenode.first << ": ";
+			cout<<"\t\t"<<thenode.second->gradoEntrada;
+			cout<<"\t"<<thenode.second->gradoSalida;
+			switch(thenode.second->get_tipo()){
 				case 0:  cout<<"\tFuente"; break;
 				case 1:  cout<<"\tHundido"; break;
 				case 2:  cout<<"\tNada";
@@ -155,13 +167,14 @@ class Graph {
 		//Iterate through array
 		//	Iterate through edges
 		//	Add edges (not pointers)
-		for (auto it=nodes.begin(); it!=nodes.end(); ++it)
-			for (auto edgeit=(*it)->edges.begin(); edgeit!=(*it)->edges.end(); ++edgeit){
-				sortedEdges.push_back(**edgeit);
+		for (auto& thenode : nodes)
+			for (auto& theedge : thenode.second->edges){
+				sortedEdges.push_back(*theedge);
 			}
+
 		sort(sortedEdges.begin(), sortedEdges.end());
 
-		vector<N> disjointSet(nodes.size());
+		vector<N> disjointSet(sizeOfGraph[0]);
 		iota(disjointSet.begin(), disjointSet.end(), 0); // Make sets (iota rellena con secuencia)
 		self minimalTree(this->nodes);
 
@@ -185,8 +198,10 @@ class Graph {
 	}
 
 	//busqueda por profundidad
-    NodeList DFS(int nodo_data_inicial){
-		node* nodo_inicial= nodes.at(nodo_data_inicial);
+    NodeList DFS(N nodo_data_inicial){
+    	if (!(nodes.count(nodo_data_inicial))) throw "Nodo no existe";
+
+		node* nodo_inicial= nodes[nodo_data_inicial];
 	    node* actual;
 		stack<node*> pila_stack;
 		list <node*> lista;
@@ -234,43 +249,33 @@ class Graph {
 	}
 //no dir
 	bool isconexo(){
-        if(!has_direction) {
-            return (nodes.size() == (DFS (nodes[0]->get_data())).size());
+        if(has_direction) return false;
+        return sizeOfGraph[0] == DFS (nodes.begin()->first).size();
+
+        /*
+        for(auto it=nodes.begin(); it!=nodes.end(); ++it){
+            if((DFS((*it)->get_data())).size() == nodes.size()) return true;
         }
-        else{
-            /*
-            for(auto it=nodes.begin(); it!=nodes.end(); ++it){
-                if((DFS((*it)->get_data())).size() == nodes.size()) return true;
-            }
-             */
-            return false;
-        }
-	}
+         */
+    }
+        
     bool is_completo(){
-        int numero_all_ady=nodes.size() -1;
-        for(auto it=nodes.begin();it!=nodes.end();++it){
-            if((*it)->gradoEntrada != numero_all_ady){
-                return false;
-            }
-        }
-        return true;
+    	for (auto& thenode : nodes){
+    		if(thenode.second->gradoEntrada != (sizeOfGraph[0] -1)) return false;
+    	}
 	}
 
 	//dirc
 	bool is_fuertemente_conexo(){
-        if(has_direction) {
-            for(auto it=nodes.begin(); it!=nodes.end(); ++it){
-                if( (DFS((*it)->get_data())).size() != nodes.size()) return false;
-            }
-            return true;
-        }
-        else{
-            return false;
-        }
+        if(!has_direction) return false;
+        for (auto& thenode : nodes){
+    		if ( DFS(thenode.first).size() != sizeOfGraph[0]) return false;
+    	}
+    	return true;
     }
 
-	NodeList BFS(int dataof,bool return_lista_int=true){
-	    node* nodo_inicial=nodes.at(dataof);
+	NodeList BFS(N dataof, bool return_lista_int=true){
+	    node* nodo_inicial=nodes[dataof];
 	    list<node*> lista;
 	    queue<node*> queue_cola;
         queue_cola.push(nodo_inicial);
