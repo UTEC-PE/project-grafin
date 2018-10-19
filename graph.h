@@ -36,6 +36,7 @@ class Graph {
 					   //Iteradores
         NodeIte ni;
         EdgeIte ei;
+        int isDirected=false;
         int sizeOfGraph[2]= {0,0}; // sizeOfGraph[0]: # de nodes							// sizeOfGraph[1]: # de edges
         void add_edge(edge someedge){
         	add_edge(someedge.nodes[0]->get_data(), someedge.nodes[1]->get_data(), 
@@ -62,6 +63,15 @@ class Graph {
 	}
 	Graph(){};
 
+	float density(){
+		return (!isDirected+1)*float(sizeOfGraph[1])/(float(sizeOfGraph[0])*(float(sizeOfGraph[0]-1)));
+	}
+
+	bool is_dense(float cota){
+		if (0>=cota>=1) throw "La cota debe estar entre 0 y 1";
+		return cota<this->density();
+	}
+
 	bool add_node(N data){
 		if (find(nodes.begin(), nodes.end(), data)) return false; //el nombre ya está tomado
 		//TODO: Mantener el vector de nodos ordenado
@@ -71,6 +81,9 @@ class Graph {
 
 
 	bool add_edge(int Vi, int Vf, int peso, bool dir, bool recursive=false){
+		//TODO: Crear subclases de grafo para dirigido y no dirigido
+		isDirected = dir;
+
 		node* initial_node=nodes.at(Vi);
 		node* final_node=nodes.at(Vf);
 

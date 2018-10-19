@@ -15,6 +15,8 @@ int main(int argc, char *argv[]) {
 
    cout << "\n\nNumber of nodes: " << mygraph.size()[0];
    cout << "\nNumber of edges: " << mygraph.size()[1];
+   cout << "\nDensity: " << mygraph.density();
+   cout << "\nisDense (0.2): " << mygraph.is_dense(0.2);
 
    cout << "\n\nMinimum spanning tree";
    graph minimalTree = mygraph.kruskalAlgorithm();
