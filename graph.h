@@ -3,8 +3,7 @@
 
 #include <vector>
 #include <list>
-#include <algorithm> 
-#include <numeric>
+#include <algorithm>
 #include <stack>
 #include <iostream>
 #include <queue>
@@ -17,7 +16,7 @@ using namespace std;
 
 class Traits {
 	public:
-		typedef int N;
+		typedef string N;
 		typedef int E;
 };
 
@@ -72,8 +71,8 @@ class Graph {
 		sizeOfGraph[0] = size;
 		node* newnode;
 		for (char i=0;i<size;++i){
-			newnode=new node(i);
-			nodes.insert(pair <N, node*> (string(1, i), newnode));
+			newnode=new node(string(1, i+65));
+			nodes.insert(pair <N, node*> (string(1, i+65), newnode));
 		}
 	}
 	Graph(){};
@@ -149,10 +148,10 @@ class Graph {
 	}
 
 	void print_degrees(){
-		cout <<"\n\t\t\tGE" <<"\tGS"<<"\tTipo";
+		cout <<"\n\n\t\t\tGE" <<"\tGS"<<"\tTipo";
 		for (auto& thenode : nodes){
 			cout<< "\nNodo " << thenode.first << ": ";
-			cout<<"\t\t"<<thenode.second->gradoEntrada;
+			cout<<"\t"<<thenode.second->gradoEntrada;
 			cout<<"\t"<<thenode.second->gradoSalida;
 			switch(thenode.second->get_tipo()){
 				case 0:  cout<<"\tFuente"; break;
@@ -174,24 +173,25 @@ class Graph {
 
 		sort(sortedEdges.begin(), sortedEdges.end());
 
-		vector<N> disjointSet(sizeOfGraph[0]);
-		iota(disjointSet.begin(), disjointSet.end(), 0); // Make sets (iota rellena con secuencia)
+		map<N, int> disjointSet;
+		int c=-1;
+		for (auto& thenode : nodes) disjointSet.insert(pair<N, int> (thenode.first, ++c));
 		self minimalTree(this->nodes);
 
 		// TODO: Hacer que disjointSet funcione con ids y no solo si la posición
 		//		 del nodo es igual a su data
 		for (edge theedge : sortedEdges){
-			int disjointElementSet0 = disjointSet[theedge.nodes[0]->get_data()];
-			int disjointElementSet1 = disjointSet[theedge.nodes[1]->get_data()];
+			N disjointKey0 = theedge.nodes[0]->get_data();
+			N disjointKey1 = theedge.nodes[1]->get_data();
 
-			if (disjointElementSet0!=disjointElementSet1){ // Find
+			if (disjointSet[disjointKey0]!=disjointSet[disjointKey1]){ // Find
 				minimalTree.add_edge(theedge);
 
 				// TODO: Tratar de encontrar una manera menos 'verbosa'
-				if (disjointElementSet0<disjointElementSet1) // Union (el mayor set se mergea al menor)
-					disjointSet[disjointElementSet1]=disjointElementSet0;
+				if (disjointSet[disjointKey0]<disjointSet[disjointKey1]) // Union (el mayor set se mergea al menor)
+					disjointSet[disjointKey1]=disjointSet[disjointKey0];
 				else
-					disjointSet[disjointElementSet0]=disjointElementSet1;
+					disjointSet[disjointKey0]=disjointSet[disjointKey1];
 			}
 		}
 		return minimalTree;
@@ -263,6 +263,7 @@ class Graph {
     	for (auto& thenode : nodes){
     		if(thenode.second->gradoEntrada != (sizeOfGraph[0] -1)) return false;
     	}
+    	return true;
 	}
 
 	//dirc
@@ -314,10 +315,10 @@ class Graph {
 	    return lista;
 	}
 
-	vector<int> ChangeNododirToData(list<node*> lista_directions){
-	    vector<int> nueva_lista;
-	    for(auto it=lista_directions.begin();it!=lista_directions.end();++it){
-	        nueva_lista.push_back((int) (*it)->get_data());
+	vector<N> ChangeNododirToData(list<node*> lista_directions){
+	    vector<N> nueva_lista;
+	    for (auto& element : lista_directions){
+	    	nueva_lista.push_back(element->get_data());
 	    }
 	    return nueva_lista;
 	}
