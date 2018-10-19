@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include <iostream>
+#include <queue>
 
 #include "node.h"
 #include "edge.h"
@@ -103,7 +104,6 @@ class Graph {
 			a=first->get_data();
 			b=-1;
 
-
 			//ver cual que arista es la de menor peso
 			for (auto it=first->edges.begin(); it!=first->edges.end(); it++){
 				cout << "peso"<<(*it)->get_peso()<<endl;
@@ -117,6 +117,46 @@ class Graph {
 		
 			b=menor->get_data();
 
+	}
+
+	void BFS(int dataof){
+	    node* nodo_inicial=nodes.at(dataof);
+	    list<node*> lista;
+	    queue<node*> queue_cola;
+        queue_cola.push(nodo_inicial);
+        node* actual;
+
+	    while(!queue_cola.empty()){
+	        actual=queue_cola.front();
+	        bool thereis=false;
+	        queue_cola.pop();
+
+	        for(auto it=lista.begin();it!=lista.end();++it){
+	            if(*it ==actual){
+	                thereis=true;
+                    break;
+	            }
+	        }
+
+	        if(!thereis){
+	            cout<<actual->get_data()<<" - ";
+	            lista.push_back(actual);
+                edge* auxedge;
+	            for(auto it=actual->edges.begin();it!=actual->edges.end();++it){
+	                auxedge=(*it);
+	                bool thereis2=false;
+                    for(auto it2=lista.begin();it2!=lista.end();++it2){
+                        if((*it2)==auxedge->nodes[1]){
+                            thereis2=true;
+                            break;
+                        }
+                    }
+                    if(!thereis2){
+                        queue_cola.push(auxedge->nodes[1]);
+                    }
+	            }
+	        }
+	    }
 	}
 };
 
