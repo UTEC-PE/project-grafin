@@ -232,35 +232,40 @@ class Graph {
 		}
 		return lista;
 	}
-
+//no dir
 	bool isconexo(){
         if(!has_direction) {
             return (nodes.size() == (DFS (nodes[0]->get_data())).size());
         }
         else{
+            /*
             for(auto it=nodes.begin(); it!=nodes.end(); ++it){
                 if((DFS((*it)->get_data())).size() == nodes.size()) return true;
             }
+             */
             return false;
         }
 	}
-
-	bool is_fuertemente_conexo(){
-        if(!has_direction) {
-            int numero_all_ady=nodes.size() == (DFS (nodes[0]->get_data())).size() -1;
-            for(auto it=nodes.begin();it!=nodes.end();++it){
-                if((*it)->gradoEntrada != numero_all_ady){
-                    return false;
-                }
+    bool is_completo(){
+        int numero_all_ady=nodes.size() -1;
+        for(auto it=nodes.begin();it!=nodes.end();++it){
+            if((*it)->gradoEntrada != numero_all_ady){
+                return false;
             }
+        }
+        return true;
+	}
 
+	//dirc
+	bool is_fuertemente_conexo(){
+        if(has_direction) {
+            for(auto it=nodes.begin(); it!=nodes.end(); ++it){
+                if( (DFS((*it)->get_data())).size() != nodes.size()) return false;
+            }
             return true;
         }
         else{
-            for(auto it=nodes.begin(); it!=nodes.end(); ++it){
-                if((DFS((*it)->get_data())).size() != nodes.size()) return false;
-            }
-            return true;
+            return false;
         }
     }
 
