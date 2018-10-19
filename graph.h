@@ -19,7 +19,6 @@ class Traits {
 		typedef int N;
 		typedef int E;
 };
-
 template <typename Tr>
 class Graph {
     public:
@@ -27,6 +26,7 @@ class Graph {
         typedef Node<self> node;
         typedef Edge<self> edge;
         typedef vector<node*> NodeSeq;
+        typedef list<node*> NodeList;
         typedef list<edge*> EdgeSeq;
         typedef typename Tr::N N;
         typedef typename Tr::E E;
@@ -185,7 +185,7 @@ class Graph {
 	}
 
 	//busqueda por profundidad
-	int DFS(int nodo_data_inicial, bool return_size=false){
+    NodeList DFS(int nodo_data_inicial){
 		node* nodo_inicial= nodes.at(nodo_data_inicial);
 	    node* actual;
 		stack<node*> pila_stack;
@@ -209,10 +209,7 @@ class Graph {
 			//si no encontramos la arista, la agregamos a la lista de visitados, la imprimimos y la recorremos
 			if(!thereis){
 				lista.push_back(actual);
-				if(!return_size) {
-					cout  << actual->get_data() << " -> ";
-
-				}
+					//cout  << actual->get_data() << " -> ";
 				edge *auxedge;
 
 				//recoremos las aristas
@@ -235,16 +232,16 @@ class Graph {
 
 			}
 		}
-		return lista.size();
+		return lista;
 	}
 
 	bool isconexo(){
         if(!has_direction) {
-            return (nodes.size() == DFS(nodes[0]->get_data(), true));
+            return (nodes.size() == (DFS (nodes[0]->get_data())).size());
         }
         else{
             for(auto it=nodes.begin(); it!=nodes.end(); ++it){
-                if(DFS((*it)->get_data(),true) == nodes.size()) return true;
+                if((DFS((*it)->get_data())).size() == nodes.size()) return true;
             }
             return false;
         }
@@ -252,23 +249,22 @@ class Graph {
 
 	bool is_fuertemente_conexo(){
         if(!has_direction) {
-            return (nodes.size() == DFS(nodes[0]->get_data(), true));
+            return (nodes.size() == (DFS (nodes[0]->get_data())).size());
         }
         else{
             for(auto it=nodes.begin(); it!=nodes.end(); ++it){
-                if(DFS((*it)->get_data(),true) != nodes.size()) return false;
+                if((DFS((*it)->get_data())).size() != nodes.size()) return false;
             }
             return true;
         }
     }
 
-	void BFS(int dataof){
+	NodeList BFS(int dataof,bool return_lista_int=true){
 	    node* nodo_inicial=nodes.at(dataof);
 	    list<node*> lista;
 	    queue<node*> queue_cola;
         queue_cola.push(nodo_inicial);
         node* actual;
-
 	    while(!queue_cola.empty()){
 	        actual=queue_cola.front();
 	        bool thereis=false;
@@ -282,7 +278,7 @@ class Graph {
 	        }
 
 	        if(!thereis){
-	            cout<<actual->get_data()<<" - ";
+	            //cout<<actual->get_data()<<" -> ";
 	            lista.push_back(actual);
                 edge* auxedge;
 	            for(auto it=actual->edges.begin();it!=actual->edges.end();++it){
@@ -300,6 +296,15 @@ class Graph {
 	            }
 	        }
 	    }
+	    return lista;
+	}
+
+	vector<int> ChangeNododirToData(list<node*> lista_directions){
+	    vector<int> nueva_lista;
+	    for(auto it=lista_directions.begin();it!=lista_directions.end();++it){
+	        nueva_lista.push_back((int) (*it)->get_data());
+	    }
+	    return nueva_lista;
 	}
 };
 
