@@ -83,7 +83,7 @@ class Graph {
 	}
 
 
-	bool add_edge(int Vi, int Vf, int peso, bool dir, bool recursive=false){
+	bool add_edge(int Vi, int Vf, E peso, bool dir, bool recursive=false){
 		//TODO: Crear subclases de grafo para dirigido y no dirigido
 		has_direction = dir;
 
