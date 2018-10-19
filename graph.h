@@ -5,6 +5,8 @@
 #include <list>
 #include <algorithm> 
 #include <numeric>
+#include <stack>
+#include <iostream>
 
 #include "node.h"
 #include "edge.h"
@@ -37,6 +39,7 @@ class Graph {
         NodeIte ni;
         EdgeIte ei;
         int isDirected=false;
+        bool have_direction;
         int sizeOfGraph[2]= {0,0}; // sizeOfGraph[0]: # de nodes							// sizeOfGraph[1]: # de edges
         void add_edge(edge someedge){
         	add_edge(someedge.nodes[0]->get_data(), someedge.nodes[1]->get_data(), 
@@ -51,6 +54,7 @@ class Graph {
         		nodes.push_back(newnode);
         		++sizeOfGraph[0];
         	}
+        	have_direction=false;
     };
 	public:
 	Graph(int size) {
@@ -93,7 +97,10 @@ class Graph {
 
 		// si el edge no tiene direccion, no hay nodo final ni inicial
 		// (debe agregarse en la lista de edges de ambos nodos)
-		if (!dir && !recursive) add_edge(Vf, Vi, peso, false, true);
+		if (!dir && !recursive) {
+            add_edge(Vf, Vi, peso, false, true);
+        }
+        if(dir==true) this->have_direction = true;
 
 		edge* new_edge = new edge(initial_node,nodes[Vf],peso,dir);
 
@@ -179,6 +186,87 @@ class Graph {
 		return minimalTree;
 	}
 
+	//busqueda por profundidad
+
+	int DFS(int nodo_data_inicial, bool return_size=false){
+		node* nodo_inicial= nodes.at(nodo_data_inicial);
+	    node* actual;
+		stack<node*> pila_stack;
+		list <node*> lista;
+
+		pila_stack.push(nodo_inicial);
+		//cuado el stack esta vacio ya no habra mas nodos por visitar
+		while(!pila_stack.empty()){
+
+			bool thereis=false;
+			actual= pila_stack.top();
+			pila_stack.pop();
+
+
+			//recoremos todas las aristas del nodo actual para ver si ya esta en la lista de visitados
+			for(auto it=lista.begin(); it!=lista.end();++it){
+				if(*it==actual){
+					thereis=true;
+				}
+
+			}
+			//si no encontramos la arista, la agregamos a la lista de visitados, la imprimimos y la recorremos
+			if(!thereis){
+				lista.push_back(actual);
+				if(!return_size) {
+					cout  << actual->get_data() << " -> ";
+
+				}
+				edge *auxedge;
+
+				//recoremos las aristas
+					for (auto it2=actual->edges.begin(); it2!=actual->edges.end(); it2++){
+						auxedge=(*it2);
+						bool thereis2=false;
+
+						for(auto it=lista.begin(); it!=lista.end();it++){
+
+
+                            if((*it)==auxedge->nodes[1]){
+								thereis2=true;
+							}
+
+						}
+						if(!thereis2) {
+							pila_stack.push(auxedge->nodes[1]);
+						}
+					}
+
+			}
+		}
+		if(return_size){
+			return lista.size(); }
+		return EXIT_SUCCESS;
+	}
+
+	bool isconexo(){
+        if(!have_direction) {
+            return (nodes.size() == DFS(nodes[0]->get_data(), true));
+        }
+        else{
+            for(auto it=nodes.begin(); it!=nodes.end(); ++it){
+                if(DFS((*it)->get_data(),true) == nodes.size()) return true;
+            }
+            return false;
+        }
+	}
+
+	bool is_fuertemente_conexo(){
+        if(!have_direction) {
+            return (nodes.size() == DFS(nodes[0]->get_data(), true));
+        }
+        else{
+            for(auto it=nodes.begin(); it!=nodes.end(); ++it){
+                if(DFS((*it)->get_data(),true) != nodes.size()) return false;
+            }
+            return true;
+        }
+	}
 };
 
 typedef Graph<Traits> graph;
