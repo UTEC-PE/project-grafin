@@ -38,8 +38,7 @@ class Graph {
 					   //Iteradores
         NodeIte ni;
         EdgeIte ei;
-        int isDirected=false;
-        bool have_direction;
+        bool has_direction=false;
         int sizeOfGraph[2]= {0,0}; // sizeOfGraph[0]: # de nodes							// sizeOfGraph[1]: # de edges
         void add_edge(edge someedge){
         	add_edge(someedge.nodes[0]->get_data(), someedge.nodes[1]->get_data(), 
@@ -54,7 +53,6 @@ class Graph {
         		nodes.push_back(newnode);
         		++sizeOfGraph[0];
         	}
-        	have_direction=false;
     };
 	public:
 	Graph(int size) {
@@ -68,7 +66,7 @@ class Graph {
 	Graph(){};
 
 	float density(){
-		return (!isDirected+1)*float(sizeOfGraph[1])/(float(sizeOfGraph[0])*(float(sizeOfGraph[0]-1)));
+		return (!has_direction+1)*float(sizeOfGraph[1])/(float(sizeOfGraph[0])*(float(sizeOfGraph[0]-1)));
 	}
 
 	bool is_dense(float cota){
@@ -86,7 +84,7 @@ class Graph {
 
 	bool add_edge(int Vi, int Vf, int peso, bool dir, bool recursive=false){
 		//TODO: Crear subclases de grafo para dirigido y no dirigido
-		isDirected = dir;
+		has_direction = dir;
 
 		node* initial_node=nodes.at(Vi);
 		node* final_node=nodes.at(Vf);
@@ -100,7 +98,6 @@ class Graph {
 		if (!dir && !recursive) {
             add_edge(Vf, Vi, peso, false, true);
         }
-        if(dir==true) this->have_direction = true;
 
 		edge* new_edge = new edge(initial_node,nodes[Vf],peso,dir);
 
@@ -245,7 +242,7 @@ class Graph {
 	}
 
 	bool isconexo(){
-        if(!have_direction) {
+        if(!has_direction) {
             return (nodes.size() == DFS(nodes[0]->get_data(), true));
         }
         else{
@@ -257,7 +254,7 @@ class Graph {
 	}
 
 	bool is_fuertemente_conexo(){
-        if(!have_direction) {
+        if(!has_direction) {
             return (nodes.size() == DFS(nodes[0]->get_data(), true));
         }
         else{
