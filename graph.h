@@ -198,7 +198,7 @@ class Graph {
 	}
 
 	//busqueda por profundidad
-    NodeList DFS(N nodo_data_inicial){
+    NodeList DFS_nodes(N nodo_data_inicial){
     	if (!(nodes.count(nodo_data_inicial))) throw "Nodo no existe";
 
 		node* nodo_inicial= nodes[nodo_data_inicial];
@@ -250,11 +250,11 @@ class Graph {
 //no dir
 	bool isconexo(){
         if(has_direction) return false;
-        return sizeOfGraph[0] == DFS (nodes.begin()->first).size();
+        return sizeOfGraph[0] == DFS_nodes (nodes.begin()->first).size();
 
         /*
         for(auto it=nodes.begin(); it!=nodes.end(); ++it){
-            if((DFS((*it)->get_data())).size() == nodes.size()) return true;
+            if((DFS_nodes((*it)->get_data())).size() == nodes.size()) return true;
         }
          */
     }
@@ -270,12 +270,12 @@ class Graph {
 	bool is_fuertemente_conexo(){
         if(!has_direction) return false;
         for (auto& thenode : nodes){
-    		if ( DFS(thenode.first).size() != sizeOfGraph[0]) return false;
+    		if ( DFS_nodes(thenode.first).size() != sizeOfGraph[0]) return false;
     	}
     	return true;
     }
 
-	NodeList BFS(N dataof, bool return_lista_int=true){
+	NodeList BFS_nodes(N dataof){
 	    node* nodo_inicial=nodes[dataof];
 	    list<node*> lista;
 	    queue<node*> queue_cola;
@@ -315,6 +315,12 @@ class Graph {
 	    return lista;
 	}
 
+    vector<N> BFS(N dataof){
+	    return ChangeNododirToData(BFS_nodes(dataof));
+	}
+    vector<N> DFS(N dataof){
+        return ChangeNododirToData(DFS_nodes(dataof));
+    }
 	vector<N> ChangeNododirToData(list<node*> lista_directions){
 	    vector<N> nueva_lista;
 	    for (auto& element : lista_directions){

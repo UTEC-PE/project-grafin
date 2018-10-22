@@ -79,14 +79,14 @@ int main(int argc, char *argv[]) {
 
    cout<<"\n\nDFS (desde nodo A): ";
    vector <string> showlist;
-   showlist=mygraph.ChangeNododirToData(mygraph.DFS("A"));
+   showlist=mygraph.DFS("A");
    for(int i=0;i<showlist.size();++i){
       cout<<showlist[i]<<" - ";
    }
 
    showlist.empty();
    cout<<"\n\nBFS (desde nodo A): ";
-   showlist=mygraph.ChangeNododirToData(mygraph.BFS("A"));
+   showlist=mygraph.BFS("A");
    for(int i=0;i<showlist.size();++i){
       cout<<showlist[i]<<" - ";
    }
