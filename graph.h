@@ -199,8 +199,6 @@ class Graph {
 
 	//busqueda por profundidad
     NodeList DFS_nodes(N nodo_data_inicial){
-    	if (!(nodes.count(nodo_data_inicial))) throw "Nodo no existe";
-
 		node* nodo_inicial= nodes[nodo_data_inicial];
 	    node* actual;
 		stack<node*> pila_stack;
@@ -275,8 +273,8 @@ class Graph {
     	return true;
     }
 
-	NodeList BFS_nodes(N dataof){
-	    node* nodo_inicial=nodes[dataof];
+	NodeList BFS_nodes(N nodo_data_inicial){
+	    node* nodo_inicial=nodes[nodo_data_inicial];
 	    list<node*> lista;
 	    queue<node*> queue_cola;
         queue_cola.push(nodo_inicial);
@@ -315,11 +313,13 @@ class Graph {
 	    return lista;
 	}
 
-    vector<N> BFS(N dataof){
-	    return ChangeNododirToData(BFS_nodes(dataof));
+    vector<N> BFS(N nodo_data_inicial){
+		if (!(nodes.count(nodo_data_inicial)))throw "Nodo no existe";
+		else {return ChangeNododirToData(BFS_nodes(nodo_data_inicial));}
 	}
-    vector<N> DFS(N dataof){
-        return ChangeNododirToData(DFS_nodes(dataof));
+    vector<N> DFS(N nodo_data_inicial){
+		if (!(nodes.count(nodo_data_inicial)))throw "Nodo no existe";
+		else {return ChangeNododirToData(DFS_nodes(nodo_data_inicial));}
     }
 	vector<N> ChangeNododirToData(list<node*> lista_directions){
 	    vector<N> nueva_lista;
