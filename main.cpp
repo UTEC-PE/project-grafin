@@ -55,7 +55,6 @@ int main(int argc, char *argv[]) {
    for(int i=0;i<showlist.size();++i){
       cout<<showlist[i]<<" - ";
    }
-*/
 
    cout << "------------- Graph test 3 (Strings) -------------\n";
    graph mygraph(11);
@@ -94,6 +93,22 @@ int main(int argc, char *argv[]) {
    cout<<"\n\nConexo: "<<mygraph.isconexo()<<endl;
    cout<<"\nFuertemente conexo (0 undirected) : "<<mygraph.is_fuertemente_conexo();
    cout<<"\nCompleto: "<<mygraph.is_completo();
+*/
+    graph mygraph3(7);
+    mygraph3.add_edge("A","D",9,0);
+    mygraph3.add_edge("D","E",4,0);
+    mygraph3.add_edge("D","C",4,0);
+    mygraph3.add_edge("D","G",2,0);
+    mygraph3.add_edge("G","C",5,0);
+    mygraph3.add_edge("C","F",6,0);
+    mygraph3.add_edge("B","F",2,0);
+    mygraph3.add_edge("B","E",3,0);
+    mygraph3.add_edge("B","C",4,0);
+    mygraph3.PrimAlgorithm("A",1);
+
+
+
+
 
 
     return EXIT_SUCCESS;
