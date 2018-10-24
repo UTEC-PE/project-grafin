@@ -220,35 +220,23 @@ class Graph {
 
 	self kruskalAlgorithm(){
 		vector<edge> sortedEdges;
-		//Iterate through array
-		//	Iterate through edges
-		//	Add edges (not pointers)
-		for (auto& thenode : nodes)
+		disjointSet<N> cycles;
+		self minimalTree(nodes);
+
+		//Ordenar edges por peso
+		for (auto& thenode : nodes){
+			cycles.makeSetFor(thenode.first); // Inicializar disjoint set
 			for (auto& theedge : thenode.second->edges){
 				sortedEdges.push_back(*theedge);
 			}
-
+		}
 		sort(sortedEdges.begin(), sortedEdges.end());
 
-		map<N, int> disjointSet;
-		int c=-1;
-		for (auto& thenode : nodes) disjointSet.insert(pair<N, int> (thenode.first, ++c));
-		self minimalTree(this->nodes);
-
-		// TODO: Hacer que disjointSet funcione con ids y no solo si la posición
-		//		 del nodo es igual a su data
 		for (edge theedge : sortedEdges){
-			N disjointKey0 = theedge.nodes[0]->get_data();
-			N disjointKey1 = theedge.nodes[1]->get_data();
-
-			if (disjointSet[disjointKey0]!=disjointSet[disjointKey1]){ // Find
+			// Si no se forman ciclos, agregar el edge y agregar nodos al disjoint set
+			if ( !cycles.inSameSet(theedge.nodes[0]->get_data(), theedge.nodes[1]->get_data()) ){
+				cycles.unionOf(theedge.nodes[0]->get_data(), theedge.nodes[1]->get_data());
 				minimalTree.add_edge(theedge);
-
-				// TODO: Tratar de encontrar una manera menos 'verbosa'
-				if (disjointSet[disjointKey0]<disjointSet[disjointKey1]) // Union (el mayor set se mergea al menor)
-					disjointSet[disjointKey1]=disjointSet[disjointKey0];
-				else
-					disjointSet[disjointKey0]=disjointSet[disjointKey1];
 			}
 		}
 		return minimalTree;
