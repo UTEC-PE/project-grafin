@@ -107,10 +107,8 @@ class Graph {
     Graph(NodeSeq somenodes){ // Nuevo grafo a partir de data de vector de nodos
     	node* newnode;
     	for (auto pairNodes : somenodes){
-        		newnode = new node(pairNodes.first);
-        		nodes.insert(pair <N, node*> (pairNodes.first, newnode));
-        		++sizeOfGraph[0];
-        	}
+    		add_node(pairNodes.first);
+        }
     };
 	public:
 	Graph(int size) : Graph(size, is_arithmetic<N>{}){}
@@ -118,7 +116,6 @@ class Graph {
 	Graph(int size, true_type) { // int, float, char
 		sizeOfGraph[0] = size;
 		node* newnode;
-        cout << "\nSIZE: " << sizeof(N);
 		for (N i=0;i<size;++i){
 			newnode=new node(i+65*(sizeof(N)==1));
 			nodes.insert(pair <N, node*> (i+65*(sizeof(N)==1), newnode));
@@ -133,6 +130,14 @@ class Graph {
 		}
 	}
 	Graph(){};
+
+	bool add_node(N node_name){
+		if (nodes.find(node_name)!=nodes.end()) return false; // name taken
+		node* newnode = new node(node_name);
+		nodes.insert(pair<N, node*> (node_name, newnode));
+		++sizeOfGraph[0];
+		return true;
+	};
 
 	float density(){
 		return (!has_direction+1)*float(sizeOfGraph[1])/(float(sizeOfGraph[0])*(float(sizeOfGraph[0]-1)));
