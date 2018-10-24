@@ -40,6 +40,7 @@ class Graph {
 					   //Iteradores
         NodeIte ni;
         EdgeIte ei;
+        EdgeSeq edges_graph;
         bool has_direction=false;
         int sizeOfGraph[2]= {0,0}; // sizeOfGraph[0]: # de nodes							// sizeOfGraph[1]: # de edges
         void add_edge(edge someedge){
@@ -104,7 +105,6 @@ class Graph {
 
 		node* initial_node=nodes[Vi];
 		node* final_node=nodes[Vf];
-
 		// si el edge no tiene direccion, no hay nodo final ni inicial
 		// (debe agregarse en la lista de edges de ambos nodos)
 		if (!dir && !recursive) {
@@ -112,7 +112,6 @@ class Graph {
         }
 
 		edge* new_edge = new edge(initial_node,final_node,peso,dir);
-
 		auto edge_in_edges = initial_node->edges.begin();
 
 		// para mantener los edges ordenados en node.edges
@@ -122,6 +121,8 @@ class Graph {
 		else if (*new_edge==**edge_in_edges) return false; 					// hay otro edge con un mismo inicio y fin
 		else initial_node->edges.insert(edge_in_edges, new_edge);
 
+
+		if(recursive==false){ edges_graph.push_back(new_edge);} //solo se agrega una vez
 		// aumentar grado
 		++initial_node->gradoEntrada;
 		++final_node->gradoSalida;
@@ -265,13 +266,21 @@ class Graph {
 	}
 
 	//dirc
-	bool is_fuertemente_conexo(){
-        if(!has_direction) return false;
-        for (auto& thenode : nodes){
-    		if ( DFS_nodes(thenode.first).size() != sizeOfGraph[0]) return false;
-    	}
-    	return true;
-    }
+	bool is_fuertemente_conexo() {
+		if (!has_direction) return false;
+		self grafo_traspuesto(nodes.size());
+		for (auto &newedges : edges_graph) {
+			grafo_traspuesto.add_edge(newedges->nodes[1]->get_data(), newedges->nodes[0]->get_data(),
+									  newedges->get_peso(), newedges->get_dir());
+		}
+		return (grafo_traspuesto.recorrido_fc() && (*this).recorrido_fc());
+	}
+
+    bool recorrido_fc(){
+		if (DFS_nodes(nodes.begin()->first).size() != sizeOfGraph[0]) return false;
+		else return true;
+	}
+
 
 	NodeList BFS_nodes(N nodo_data_inicial){
 	    node* nodo_inicial=nodes[nodo_data_inicial];
