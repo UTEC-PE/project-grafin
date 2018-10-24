@@ -8,6 +8,7 @@
 #include <iostream>
 #include <queue>
 #include <map>
+#include <unordered_map>
 
 #include "node.h"
 #include "edge.h"
@@ -18,6 +19,62 @@ class Traits {
 	public:
 		typedef char N;
 		typedef int E;
+};
+
+struct setSizes {
+	int set, size=0;
+	setSizes();
+	setSizes(int se) : set(se){};
+	setSizes operator=(const int someset){
+		set = someset; ++size;
+		return *this;
+	}
+	bool operator!=(const int other_set){
+		return set!= other_set;
+	}
+	ostream &operator<<(ostream &output){
+		output << this->set;
+		return output;
+	}
+};
+
+template <typename Ds>
+struct disjointSet {
+	unordered_map<Ds, int> nodename_to_id;
+	unordered_map<int, Ds> id_to_nodename;
+	vector<setSizes> sets;
+
+	void makeSetFor(Ds node_name){
+		nodename_to_id.insert(pair<Ds, int> (node_name, sets.size()));
+		id_to_nodename.insert(pair<int, Ds> (sets.size(), node_name));
+		sets.push_back(setSizes(sets.size()));
+	}
+
+	Ds parentOf(Ds node_name){
+		while (int (sets[nodename_to_id[node_name]] != nodename_to_id[node_name])){
+			sets[nodename_to_id[node_name]] = sets[sets[nodename_to_id[node_name]].set];
+			node_name = id_to_nodename[sets[nodename_to_id[node_name]].set];
+		}
+		return node_name;
+	}
+
+	void unionOf(Ds node_name1, Ds node_name2){
+		int id_of_node1 = nodename_to_id[parentOf(node_name1)];
+		int id_of_node2 = nodename_to_id[parentOf(node_name2)];
+
+		if (sets[id_of_node1].size > sets[id_of_node2].size){
+			sets[id_of_node2] = sets[id_of_node1].set;
+		}
+		else sets[id_of_node1] = sets[id_of_node2].set;
+	}
+
+	int inSameSet(Ds node_name1, Ds node_name2){ return parentOf(node_name1)==parentOf(node_name2);}
+
+	// debugging
+	void print(){
+		cout <<"\nCycles";
+		for (auto&  node: nodename_to_id) cout << "\nNode: " << node.first << "\tSet: " << sets[node.second].set << "\tParent: " << node.second;
+	}
 };
 
 template <typename Tr>
@@ -61,9 +118,10 @@ class Graph {
 	Graph(int size, true_type) { // int, float, char
 		sizeOfGraph[0] = size;
 		node* newnode;
+        cout << "\nSIZE: " << sizeof(N);
 		for (N i=0;i<size;++i){
 			newnode=new node(i+65*(sizeof(N)==1));
-			nodes.insert(pair <N, node*> (i+65*(sizeof(N)==1), newnode)); // sizeof(N)==1 si true, es char
+			nodes.insert(pair <N, node*> (i+65*(sizeof(N)==1), newnode));
 		}
 	}
 	Graph(int size, false_type) { // string
