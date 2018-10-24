@@ -15,6 +15,7 @@ class Node {
         //double y;
 
     public:
+        bool thereis=false;
         EdgeSeq edges;
 
         Node(N nombre):data(nombre){};

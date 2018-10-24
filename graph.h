@@ -198,55 +198,39 @@ class Graph {
 	}
 
     self PrimAlgorithm(N dataof, bool primprint=false){
-        list <edge*> lista_edges;
         multimap< E ,edge*> edge_map;
-        list <node*> nodos_visitados;
+        int nodos_visitados=0;
         Graph PrimGraph(nodes.size());
 
-        nodos_visitados.push_back(nodes[dataof]);
+        ++nodos_visitados;
+		nodes[dataof]->thereis=true;
         for(auto it3=nodes[dataof]->edges.begin();it3!=nodes[dataof]->edges.end();++it3){
             edge_map.insert(pair <E, edge*>((*it3)->get_peso(), *it3));
             //cout<<(*it3)->nodes[1]->get_data()<<"| "<<(*it3)->get_peso()<<endl;
         }
 
-        while(nodos_visitados.size()!=nodes.size()){
-            auto it=edge_map.begin();
-            edge* aux_edge=it->second;
+        while(nodos_visitados!=nodes.size()){
+            //auto it=edge_map.begin();
+            edge* aux_edge=edge_map.begin()->second;
             //cout<<"maybe next edge pair : "<<aux_edge->nodes[0]->get_data()<<","<<aux_edge->nodes[1]->get_data()<<"||"<<endl;
-            bool thereis=false;
-            for(auto it2=nodos_visitados.begin();it2!=nodos_visitados.end();++it2){
-                if(aux_edge->nodes[1]==*it2){
-                    //si la prox arista tiene en nodes[1] un nodo que ya vsito, lo borra
-                    //cout<<"erase"<<endl;
-                    edge_map.erase(edge_map.begin());
-                    thereis=true;
-                    break;
-                }
-            }
-            if(thereis==false){
-                //cout<<"yes"<<endl;
-                //borro el 1ero del multimapa antes de agregarle los nuevos edges
-                edge_map.erase(edge_map.begin());
-                if(primprint) { lista_edges.push_back(aux_edge); }
-                PrimGraph.add_edge((aux_edge)->nodes[0]->get_data(),(aux_edge)->nodes[1]->get_data(),(aux_edge)->get_peso(),0);
-                nodos_visitados.push_back(aux_edge->nodes[1]);
-                for(auto it3=aux_edge->nodes[1]->edges.begin();it3!=aux_edge->nodes[1]->edges.end();++it3){
-                    //cout<<"edges++"<<endl;
-                    edge_map.insert(pair <E, edge*>( (*it3)->get_peso(), *it3));
-                }
-            }
-        }
-        /*
-        cout<<"nodos visit :"<<nodos_visitados.size()<<endl;
-        cout<<"lista de edges size: "<<lista_edges.size()<<endl;
-        cout<<"edge map size:"<<edge_map.size()<<endl;
-         */
+			edge_map.erase(edge_map.begin());
+			if(!aux_edge->nodes[1]->thereis){
+				//cout<<"si"<<endl;
+				aux_edge->nodes[1]->thereis=true;
+					//imprimo
+					if(primprint) {
+						cout<<aux_edge->nodes[0]->get_data()<<","<<aux_edge->nodes[1]->get_data()<<"||"<<endl;
+					}
 
-        if(primprint){
-            for(auto aux_edge=lista_edges.begin();aux_edge!=lista_edges.end();++aux_edge){
-                cout<<(*aux_edge)->nodes[0]->get_data()<<","<<(*aux_edge)->nodes[1]->get_data()<<"||"<<endl;
+				PrimGraph.add_edge((aux_edge)->nodes[0]->get_data(),(aux_edge)->nodes[1]->get_data(),(aux_edge)->get_peso(),0);
+				for(auto it3=aux_edge->nodes[1]->edges.begin();it3!=aux_edge->nodes[1]->edges.end();++it3){
+					//cout<<"edges++"<<endl;
+					edge_map.insert(pair <E, edge*>( (*it3)->get_peso(), *it3));
+				}
+				++nodos_visitados;
             }
         }
+
         return PrimGraph;
     }
 
