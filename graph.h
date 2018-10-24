@@ -16,7 +16,7 @@ using namespace std;
 
 class Traits {
 	public:
-		typedef string N;
+		typedef char N;
 		typedef int E;
 };
 
@@ -61,10 +61,9 @@ class Graph {
 	Graph(int size, true_type) { // int, float, char
 		sizeOfGraph[0] = size;
 		node* newnode;
-		N i=65*(sizeof(N)==1);
-		for (;i<size;++i){
-			newnode=new node(i);
-			nodes.insert(pair <N, node*> (i, newnode));
+		for (N i=0;i<size;++i){
+			newnode=new node(i+65*(sizeof(N)==1));
+			nodes.insert(pair <N, node*> (i+65*(sizeof(N)==1), newnode)); // sizeof(N)==1 si true, es char
 		}
 	}
 	Graph(int size, false_type) { // string
