@@ -38,19 +38,21 @@ struct setSizes {
 	}
 };
 
-template <typename Ds>
+template <typename Tr>
 struct disjointSet {
-	unordered_map<Ds, int> nodename_to_id;
-	unordered_map<int, Ds> id_to_nodename;
+	typedef typename Tr::N N;
+    typedef typename Tr::E E;
+	unordered_map<N, int> nodename_to_id;
+	unordered_map<int, N> id_to_nodename;
 	vector<setSizes> sets;
 
-	void makeSetFor(Ds node_name){
-		nodename_to_id.insert(pair<Ds, int> (node_name, sets.size()));
-		id_to_nodename.insert(pair<int, Ds> (sets.size(), node_name));
+	void makeSetFor(N node_name){
+		nodename_to_id.insert(pair<N, int> (node_name, sets.size()));
+		id_to_nodename.insert(pair<int, N> (sets.size(), node_name));
 		sets.push_back(setSizes(sets.size()));
 	}
 
-	Ds parentOf(Ds node_name){
+	N parentOf(N node_name){
 		while (int (sets[nodename_to_id[node_name]] != nodename_to_id[node_name])){
 			sets[nodename_to_id[node_name]] = sets[sets[nodename_to_id[node_name]].set];
 			node_name = id_to_nodename[sets[nodename_to_id[node_name]].set];
@@ -58,7 +60,7 @@ struct disjointSet {
 		return node_name;
 	}
 
-	void unionOf(Ds node_name1, Ds node_name2){
+	void unionOf(N node_name1, N node_name2){
 		int id_of_node1 = nodename_to_id[parentOf(node_name1)];
 		int id_of_node2 = nodename_to_id[parentOf(node_name2)];
 
@@ -68,7 +70,7 @@ struct disjointSet {
 		else sets[id_of_node1] = sets[id_of_node2].set;
 	}
 
-	int inSameSet(Ds node_name1, Ds node_name2){ return parentOf(node_name1)==parentOf(node_name2);}
+	int inSameSet(N node_name1, N node_name2){ return parentOf(node_name1)==parentOf(node_name2);}
 
 	// debugging
 	void print(){
@@ -76,6 +78,8 @@ struct disjointSet {
 		for (auto&  node: nodename_to_id) cout << "\nNode: " << node.first << "\tSet: " << sets[node.second].set << "\tParent: " << node.second;
 	}
 };
+
+typedef disjointSet<Traits> DisjointSet;
 
 template <typename Tr>
 class Graph {
@@ -225,7 +229,7 @@ class Graph {
 
 	self kruskalAlgorithm(){
 		vector<edge> sortedEdges;
-		disjointSet<N> cycles;
+		DisjointSet cycles;
 		self minimalTree(nodes);
 
 		//Ordenar edges por peso
