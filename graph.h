@@ -196,6 +196,11 @@ class Graph {
 		}
 		return minimalTree;
 	}
+	void MakeAllThereisFalse(){
+		for(auto it=nodes.begin();it!=nodes.end();++it){
+			it->second->thereis= false;
+		}
+	}
 
     self PrimAlgorithm(N dataof, bool primprint=false){
         multimap< E ,edge*> edge_map;
@@ -210,14 +215,12 @@ class Graph {
         }
 
         while(nodos_visitados!=nodes.size()){
-            //auto it=edge_map.begin();
             edge* aux_edge=edge_map.begin()->second;
             //cout<<"maybe next edge pair : "<<aux_edge->nodes[0]->get_data()<<","<<aux_edge->nodes[1]->get_data()<<"||"<<endl;
 			edge_map.erase(edge_map.begin());
 			if(!aux_edge->nodes[1]->thereis){
 				//cout<<"si"<<endl;
 				aux_edge->nodes[1]->thereis=true;
-					//imprimo
 					if(primprint) {
 						cout<<aux_edge->nodes[0]->get_data()<<","<<aux_edge->nodes[1]->get_data()<<"||"<<endl;
 					}
@@ -230,8 +233,9 @@ class Graph {
 				++nodos_visitados;
             }
         }
+		MakeAllThereisFalse();
 
-        return PrimGraph;
+		return PrimGraph;
     }
 
 

@@ -105,6 +105,7 @@ int main(int argc, char *argv[]) {
     mygraph3.add_edge("B","E",3,0);
     mygraph3.add_edge("B","C",4,0);
     mygraph3.PrimAlgorithm("A",1);
+    mygraph3.PrimAlgorithm("A",1).print();
 
 
 
