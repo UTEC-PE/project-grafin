@@ -133,6 +133,13 @@ class Graph {
 			nodes.insert(pair <N, node*> (string(1, i+65), newnode));
 		}
 	}
+
+	Graph(const Graph &other_graph) { // copy constructor
+		nodes = other_graph.nodes;
+		has_direction= other_graph.has_direction;
+		sizeOfGraph[0] = other_graph.sizeOfGraph[0];
+		sizeOfGraph[1] = other_graph.sizeOfGraph[1];
+	}
 	Graph(){};
 
 	bool add_node(N node_name){
