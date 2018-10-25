@@ -17,7 +17,7 @@ using namespace std;
 
 class Traits {
 	public:
-		typedef char N;
+		typedef string N;
 		typedef int E;
 };
 
@@ -257,9 +257,54 @@ class Graph {
 		}
 		return minimalTree;
 	}
+	void MakeAllThereisFalse(){
+		for(auto it=nodes.begin();it!=nodes.end();++it){
+			it->second->thereis= false;
+		}
+	}
 
-	//busqueda por profundidad
-    NodeList DFS_nodes(N nodo_data_inicial){
+    self PrimAlgorithm(N dataof, bool primprint=false){
+        multimap< E ,edge*> edge_map;
+        int nodos_visitados=0;
+        Graph PrimGraph(nodes.size());
+
+        ++nodos_visitados;
+		nodes[dataof]->thereis=true;
+        for(auto it3=nodes[dataof]->edges.begin();it3!=nodes[dataof]->edges.end();++it3){
+            edge_map.insert(pair <E, edge*>((*it3)->get_peso(), *it3));
+            //cout<<(*it3)->nodes[1]->get_data()<<"| "<<(*it3)->get_peso()<<endl;
+        }
+
+        while(nodos_visitados!=nodes.size()){
+            edge* aux_edge=edge_map.begin()->second;
+            //cout<<"maybe next edge pair : "<<aux_edge->nodes[0]->get_data()<<","<<aux_edge->nodes[1]->get_data()<<"||"<<endl;
+			edge_map.erase(edge_map.begin());
+			if(!aux_edge->nodes[1]->thereis){
+				//cout<<"si"<<endl;
+				aux_edge->nodes[1]->thereis=true;
+					if(primprint) {
+						cout<<aux_edge->nodes[0]->get_data()<<","<<aux_edge->nodes[1]->get_data()<<"||"<<endl;
+					}
+
+				PrimGraph.add_edge((aux_edge)->nodes[0]->get_data(),(aux_edge)->nodes[1]->get_data(),(aux_edge)->get_peso(),0);
+				for(auto it3=aux_edge->nodes[1]->edges.begin();it3!=aux_edge->nodes[1]->edges.end();++it3){
+					//cout<<"edges++"<<endl;
+					edge_map.insert(pair <E, edge*>( (*it3)->get_peso(), *it3));
+				}
+				++nodos_visitados;
+            }
+        }
+		MakeAllThereisFalse();
+
+		return PrimGraph;
+    }
+
+
+
+    //busqueda por profundidad
+    NodeList DFS(N nodo_data_inicial){
+    	if (!(nodes.count(nodo_data_inicial))) throw "Nodo no existe";
+    	
 		node* nodo_inicial= nodes[nodo_data_inicial];
 	    node* actual;
 		stack<node*> pila_stack;
@@ -378,10 +423,6 @@ class Graph {
 		if (!(nodes.count(nodo_data_inicial)))throw "Nodo no existe";
 		else {return ChangeNododirToData(BFS_nodes(nodo_data_inicial));}
 	}
-    vector<N> DFS(N nodo_data_inicial){
-		if (!(nodes.count(nodo_data_inicial)))throw "Nodo no existe";
-		else {return ChangeNododirToData(DFS_nodes(nodo_data_inicial));}
-    }
 	vector<N> ChangeNododirToData(list<node*> lista_directions){
 	    vector<N> nueva_lista;
 	    for (auto& element : lista_directions){
