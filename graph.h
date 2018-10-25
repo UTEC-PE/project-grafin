@@ -1,4 +1,5 @@
 //TODO: Crear subclases de grafo para dirigido y no dirigido
+//TODO: Colocar ids a los nodos
 
 #ifndef GRAPH_H
 #define GRAPH_H
@@ -12,6 +13,7 @@
 #include <queue>
 #include <map>
 #include <unordered_map>
+#include <set>
 
 #include "node.h"
 #include "edge.h"
@@ -19,7 +21,7 @@
 using namespace std;
 
 struct Traits {
-	typedef string N;
+	typedef int N;
 	typedef int E;
 };
 
@@ -335,13 +337,13 @@ class Graph {
 			return PrimGraph;
 	    };
 
-	    NodeList DFS(N nodo_data_inicial){  // Busqueda por profundidad
-	    	if (!(nodes.count(nodo_data_inicial))) throw "Nodo no existe";
+	    vector<N> DFS(N nodo_data_inicial){  // Busqueda por profundidad
+	    	if (nodes.find(nodo_data_inicial)==nodes.end()) throw "Nodo no existe";
 	    	
 			node* nodo_inicial= nodes[nodo_data_inicial];
 		    node* actual;
 			stack<node*> pila_stack;
-			list <node*> lista;
+			set <node*> visitados;
 
 			pila_stack.push(nodo_inicial);
 			// Cuado el stack esta vacio ya no habra mas nodos por visitar
@@ -350,31 +352,20 @@ class Graph {
 				actual= pila_stack.top();
 				pila_stack.pop();
 
-
-				// Recoremos todas las aristas del nodo actual para ver si ya esta en la lista de visitados
-				for(auto it=lista.begin(); it!=lista.end();++it){
-					if(*it==actual){
-						thereis=true;
-						break;
-					}
-				}
-				// Si no encontramos la arista, la agregamos a la lista de visitados, la imprimimos y la recorremos
-				if(!thereis){
-					lista.push_back(actual);
-					edge *auxedge;
-
+				// Agregamos el nodo a visitados. Si devuelve true, recorremos sus aristas
+				// Si devuelve false, ya esta en visitados y no se puede insertar al ser un elemento repetido
+				if(visitados.insert(actual).second){
 					// Recoremos las aristas
-					for (auto it2=actual->edges.begin(); it2!=actual->edges.end(); it2++){
-						auxedge=(*it2);
-						bool thereis2=false;
-
-						for(auto it=lista.begin(); it!=lista.end();it++) if((*it)==auxedge->nodes[1]) thereis2=true;
-						if(!thereis2) pila_stack.push(auxedge->nodes[1]);
+					for (auto it=actual->edges.begin(); it!=actual->edges.end(); ++it){
+						if (visitados.find((*it)->nodes[1])==visitados.end()) pila_stack.push((*it)->nodes[1]);
 					}
-
 				}
 			}
-			return lista;
+
+			// convertir set de punteros de nodo a vector de nombres de nodo
+			vector<N> vector_visitados;
+			for (auto pnode: visitados) vector_visitados.push_back(pnode->get_data());
+			return vector_visitados;
 		};
 
 		NodeList BFS_nodes(N nodo_data_inicial){
