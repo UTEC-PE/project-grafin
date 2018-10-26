@@ -120,6 +120,20 @@ class Graph {
         	add_edge(someedge.nodes[0]->get_data(), someedge.nodes[1]->get_data(), someedge.get_peso(), someedge.get_dir());
         };
 
+        EdgeIte remove_edge(node* vi, node* vf, bool recursive=false){
+        	EdgeIte it;
+        	for (auto it_edge = vi->edges.begin(); it_edge!=vi->edges.end(); ++it_edge){
+				if ((*it_edge)->nodes[1]==vf) {
+					it = vi->edges.erase(it_edge);
+					delete *it_edge;
+					break;
+				}
+			}
+
+			if (!has_direction && !recursive) remove_edge(vf, vi, true);
+			return it;
+        }
+
         bool recorrido_fc(){
 			if (DFS_nodes(nodes.begin()->first).size() != sizeOfGraph[0]) return false;
 			else return true;
@@ -241,6 +255,28 @@ class Graph {
 			sizeOfGraph[1]+=1*!recursive;
 			return true;
 		};
+
+		bool remove_node(N node_name){
+			if (nodes.find(node_name)==nodes.end()) return false; // not found
+			node* to_remove = nodes[node_name];
+
+			auto it_edge = to_remove->edges.begin();
+			while (it_edge!=to_remove->edges.end()){
+				it_edge = remove_edge((*it_edge)->nodes[0], (*it_edge)->nodes[1]);
+			}
+			delete to_remove;
+			nodes.erase(node_name);
+			return true;
+		}
+
+		bool remove_edge(N vi_name, N vf_name, bool recursive=false){
+			if (nodes.find(vi_name)==nodes.end() || nodes.find(vf_name)==nodes.end()) return false; // not found
+			node* vi = nodes[vi_name];
+			node* vf = nodes[vf_name];
+
+			remove_edge(vi, vf);
+			return true;
+		}
 
 
 		// Propiedades
