@@ -317,6 +317,7 @@ class Graph {
 				cout <<"Nodo "<< node.first<<"   "<<node.second->thereis<<endl;
 			}
 			*/
+			MakeAllThereisFalse();
 			return isbipartite;
 		};
 
@@ -353,7 +354,7 @@ class Graph {
 	    self PrimAlgorithm(N dataof, bool primprint=false){
 	        multimap< E ,edge*> edge_map;
 	        int nodos_visitados=0;
-	        Graph PrimGraph(nodes.size());
+	        Graph PrimGraph(nodes);
 
 	        ++nodos_visitados;
 			nodes[dataof]->thereis=true;
