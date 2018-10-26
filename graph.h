@@ -102,9 +102,7 @@ class Graph {
 
     private:
         NodeSeq nodes; // Mapa de punteros de nodos <data (node name), node pointer>
-        NodeIte ni;
-        EdgeIte ei;
-        EdgeSeq edges_graph;
+        EdgeSeq edges_graph; // usado en fuertemente conexo
         bool has_direction=false;
         int sizeOfGraph[2]= {0,0}; // sizeOfGraph[0]: num de nodes -  sizeOfGraph[1]: num de edges
 
@@ -464,6 +462,14 @@ class Graph {
 		    	nueva_lista.push_back(element->get_data());
 		    }
 		    return nueva_lista;
+		}
+
+		~Graph(){
+			auto it = nodes.begin();
+			while (!nodes.empty()){
+				delete (*it).second;
+				it = nodes.erase(it);
+			}
 		}
 
 
