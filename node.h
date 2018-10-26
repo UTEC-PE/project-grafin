@@ -34,6 +34,13 @@ public:
         // Métodos de acceso
         N get_data(){ return data; }
 
+        ~Node(){
+            while(!edges.empty()) {
+                delete edges.back();
+                edges.pop_back();
+            }
+        }
+
 };
 
 #endif

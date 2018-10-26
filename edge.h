@@ -37,6 +37,10 @@ public:
     bool operator<(Edge<G> cmp) const{
      return cmp.peso==peso? nodes[1]<cmp.nodes[1] : peso<cmp.peso;
     }
+
+    ~Edge(){
+        nodes[0] = nodes[1] = nullptr;
+    }
 };
 
 #endif
