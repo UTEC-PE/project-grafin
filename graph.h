@@ -308,6 +308,22 @@ class Graph {
 	    	return true;
 		};
 
+		bool bipartite(N initial_node){
+			bool isbipartite=true;
+			this->DFS(initial_node, true, isbipartite);
+
+			/* For debugging
+			for (auto& node: nodes){
+				cout <<"Nodo "<< node.first<<"   "<<node.second->thereis<<endl;
+			}
+			*/
+			return isbipartite;
+		};
+
+		bool bipartite(){
+			return bipartite(nodes.begin()->first);
+		}
+
 
 		// Algoritmos en grafos 
 		self kruskalAlgorithm(){
@@ -376,7 +392,8 @@ class Graph {
 		    	cout <<"\nEdge " << ++c << ": " << tuple.first << " " << tuple.second;
 		}
 		
-	    vector<pair<N, N>> DFS(N nodo_data_inicial, bool silenced=false){  // Busqueda por profundidad
+		static bool basurita;
+	    vector<pair<N, N>> DFS(N nodo_data_inicial, bool silenced=false, bool &isbipartite=basurita){  // Busqueda por profundidad
 	    	if (nodes.find(nodo_data_inicial)==nodes.end()) throw "Nodo no existe";
 	    	
 			node* actual= nodes[nodo_data_inicial];
@@ -395,6 +412,7 @@ class Graph {
 				auto it = actual->edges.begin();
 				while (it!=actual->edges.end()){
 					if (visitados.find((*it)->nodes[1])==visitados.end()){
+						if(isbipartite) (*it)->nodes[1]->thereis = !(*it)->nodes[0]->thereis;
 						pila_stack.push((*it)->nodes[1]);
 						actual = pila_stack.top();
 						visitados.insert(actual);
@@ -402,6 +420,7 @@ class Graph {
 						it = actual->edges.begin();
 						continue;
 					}
+					else if(isbipartite) isbipartite = (*it)->nodes[0]->thereis != (*it)->nodes[1]->thereis;
 					++it;
 				}
 				
