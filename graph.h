@@ -309,7 +309,7 @@ class Graph {
 		};
 
 		bool bipartite(N initial_node){
-			bool isbipartite=true;
+			bool* isbipartite = new bool(true);
 			this->DFS(initial_node, true, isbipartite);
 
 			/* For debugging
@@ -318,7 +318,7 @@ class Graph {
 			}
 			*/
 			MakeAllThereisFalse();
-			return isbipartite;
+			return *isbipartite;
 		};
 
 		bool bipartite(){
@@ -391,10 +391,9 @@ class Graph {
 	    	int c=0;
 		    for (auto& tuple: v)
 		    	cout <<"\nEdge " << ++c << ": " << tuple.first << " " << tuple.second;
-		}
+		};
 		
-		static bool basurita;
-	    vector<pair<N, N>> DFS(N nodo_data_inicial, bool silenced=false, bool &isbipartite=basurita){  // Busqueda por profundidad
+	    vector<pair<N, N>> DFS(N nodo_data_inicial, bool silenced=false, bool* isbipartite=nullptr){  // Busqueda por profundidad
 	    	if (nodes.find(nodo_data_inicial)==nodes.end()) throw "Nodo no existe";
 	    	
 			node* actual= nodes[nodo_data_inicial];
@@ -421,7 +420,7 @@ class Graph {
 						it = actual->edges.begin();
 						continue;
 					}
-					else if(isbipartite) isbipartite = (*it)->nodes[0]->thereis != (*it)->nodes[1]->thereis;
+					else if(isbipartite) *isbipartite = (*it)->nodes[0]->thereis != (*it)->nodes[1]->thereis;
 					++it;
 				}
 				
