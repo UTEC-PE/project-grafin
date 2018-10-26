@@ -133,8 +133,7 @@ class Graph {
         }
 
         bool recorrido_fc(){
-			if (DFS_nodes(nodes.begin()->first).size() != sizeOfGraph[0]) return false;
-			else return true;
+        	return (DFS(nodes.begin()->first).size()+1 == sizeOfGraph[0]);
 		};
 
 		void MakeAllThereisFalse(){
@@ -288,13 +287,13 @@ class Graph {
 		};
 
 		bool isconexo(){ 	// no dirigidos
-	        if(has_direction) return false;
-	        return sizeOfGraph[0] == DFS(nodes.begin()->first).size();
+	        if(has_direction) throw "Para grafos dirigidos se usa is_fuertemente_conexo";
+	        return sizeOfGraph[0] == (DFS(nodes.begin()->first, true).size()+1);
 	    };
 
 		bool is_fuertemente_conexo(){ // dirigidos
-			if (!has_direction) return false;
-			self grafo_traspuesto(nodes.size());
+			if (!has_direction) throw "Para grafos no dirigidos se usa isconexo";
+			self grafo_traspuesto(nodes);
 			for (auto &newedges : edges_graph) {
 				grafo_traspuesto.add_edge(newedges->nodes[1]->get_data(), newedges->nodes[0]->get_data(),
 										  newedges->get_peso(), newedges->get_dir());
@@ -377,7 +376,7 @@ class Graph {
 		    	cout <<"\nEdge " << ++c << ": " << tuple.first << " " << tuple.second;
 		}
 		
-	    vector<pair<N, N>> DFS(N nodo_data_inicial){  // Busqueda por profundidad
+	    vector<pair<N, N>> DFS(N nodo_data_inicial, bool silenced=false){  // Busqueda por profundidad
 	    	if (nodes.find(nodo_data_inicial)==nodes.end()) throw "Nodo no existe";
 	    	
 			node* actual= nodes[nodo_data_inicial];
@@ -411,7 +410,7 @@ class Graph {
 				}
 			}
 
-			print_DFS(vector_edges_visitados); // comentar si no se quiere imprimir
+			if (!silenced) print_DFS(vector_edges_visitados); // comentar si no se quiere imprimir
 			return vector_edges_visitados;
 		};
 
