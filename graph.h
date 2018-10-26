@@ -255,7 +255,7 @@ class Graph {
 
 		bool isconexo(){ 	// no dirigidos
 	        if(has_direction) return false;
-	        return sizeOfGraph[0] == DFS_nodes (nodes.begin()->first).size();
+	        return sizeOfGraph[0] == DFS(nodes.begin()->first).size();
 	    };
 
 		bool is_fuertemente_conexo(){ // dirigidos
@@ -337,35 +337,48 @@ class Graph {
 			return PrimGraph;
 	    };
 
-	    vector<N> DFS(N nodo_data_inicial){  // Busqueda por profundidad
+	    void print_DFS(vector<pair<N, N>> v) {
+	    	int c=0;
+		    for (auto& tuple: v)
+		    	cout <<"\nEdge " << ++c << ": " << tuple.first << " " << tuple.second;
+		}
+		
+	    vector<pair<N, N>> DFS(N nodo_data_inicial){  // Busqueda por profundidad
 	    	if (nodes.find(nodo_data_inicial)==nodes.end()) throw "Nodo no existe";
 	    	
-			node* nodo_inicial= nodes[nodo_data_inicial];
-		    node* actual;
+			node* actual= nodes[nodo_data_inicial];
 			stack<node*> pila_stack;
-			set <node*> visitados;
+			set<node*> visitados;
+			vector<pair<N, N>> vector_edges_visitados;
 
-			pila_stack.push(nodo_inicial);
-			// Cuado el stack esta vacio ya no habra mas nodos por visitar
+			// agregar nodo inicial y marcarlo como visitado
+			pila_stack.push(actual);
+			visitados.insert(actual);
+
 			while(!pila_stack.empty()){
-				bool thereis=false;
-				actual= pila_stack.top();
-				pila_stack.pop();
+				actual = pila_stack.top();
 
-				// Agregamos el nodo a visitados. Si devuelve true, recorremos sus aristas
-				// Si devuelve false, ya esta en visitados y no se puede insertar al ser un elemento repetido
-				if(visitados.insert(actual).second){
-					// Recoremos las aristas
-					for (auto it=actual->edges.begin(); it!=actual->edges.end(); ++it){
-						if (visitados.find((*it)->nodes[1])==visitados.end()) pila_stack.push((*it)->nodes[1]);
+				// si hay algun vertice no visitado, agregarlo al stack y continuar busqueda
+				auto it = actual->edges.begin();
+				while (it!=actual->edges.end()){
+					if (visitados.find((*it)->nodes[1])==visitados.end()){
+						pila_stack.push((*it)->nodes[1]);
+						actual = pila_stack.top();
+						visitados.insert(actual);
+						vector_edges_visitados.push_back(pair<N,N> ((*it)->nodes[0]->get_data(), (*it)->nodes[1]->get_data()));
+						it = actual->edges.begin();
+						continue;
 					}
+					++it;
+				}
+				
+				if (pila_stack.top()==actual){ 
+					pila_stack.pop();
 				}
 			}
 
-			// convertir set de punteros de nodo a vector de nombres de nodo
-			vector<N> vector_visitados;
-			for (auto pnode: visitados) vector_visitados.push_back(pnode->get_data());
-			return vector_visitados;
+			print_DFS(vector_edges_visitados); // comentar si no se quiere imprimir
+			return vector_edges_visitados;
 		};
 
 		NodeList BFS_nodes(N nodo_data_inicial){
