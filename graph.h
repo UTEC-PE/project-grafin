@@ -103,7 +103,7 @@ class Graph {
     private:
         NodeSeq nodes; // Mapa de punteros de nodos <data (node name), node pointer>
         EdgeSeq edges_graph; // usado en fuertemente conexo
-        bool has_direction=false;
+        
         int sizeOfGraph[2]= {0,0}; // sizeOfGraph[0]: num de nodes -  sizeOfGraph[1]: num de edges
 
 	    Graph(NodeSeq somenodes){ // Nuevo grafo a partir de data de vector de nodos
@@ -141,8 +141,10 @@ class Graph {
 				it->second->thereis= false;
 			}
 		};
+		bool has_direction=false;
 
 	public:
+
 		// Constructores
 		Graph(int size) : Graph(size, is_arithmetic<N>{}){};
 
@@ -206,7 +208,6 @@ class Graph {
 			return nodes[name]->get_tipo();
 		};
 
-		
 
 		// Metodos fundamentales
 		bool add_node(N node_name){
@@ -266,7 +267,7 @@ class Graph {
 			return true;
 		}
 
-		bool remove_edge(N vi_name, N vf_name, bool recursive=false){
+		bool remove_edge(N vi_name, N vf_name){
 			if (nodes.find(vi_name)==nodes.end() || nodes.find(vf_name)==nodes.end()) return false; // not found
 			node* vi = nodes[vi_name];
 			node* vf = nodes[vf_name];
@@ -309,25 +310,29 @@ class Graph {
 		};
 
 		bool bipartite(N initial_node){
-			bool* isbipartite = new bool(true);
-			this->DFS(initial_node, true, isbipartite);
+			bool* isbipartite = new bool(false);
+			DFS(initial_node, true, isbipartite);
 
-			/* For debugging
-			for (auto& node: nodes){
-				cout <<"Nodo "<< node.first<<"   "<<node.second->thereis<<endl;
-			}
-			*/
-			MakeAllThereisFalse();
 			return *isbipartite;
 		};
 
 		bool bipartite(){
-			return bipartite(nodes.begin()->first);
+			for (auto& node: nodes) {
+				if (!bipartite(node.first)) 
+					return false;
+				MakeAllThereisFalse();
+			}
+
+			
+			
+			return true;
 		}
 
 
 		// Algoritmos en grafos 
 		self kruskalAlgorithm(){
+			if (has_direction) throw "Prim solo aplica a no dirigidos";
+
 			vector<edge> sortedEdges;
 			DisjointSet cycles;
 			self minimalTree(nodes);
@@ -352,6 +357,9 @@ class Graph {
 		};
 
 	    self PrimAlgorithm(N dataof, bool primprint=false){
+	    	if (has_direction) throw "Prim solo aplica a no dirigidos";
+	    	MakeAllThereisFalse();
+
 	        multimap< E ,edge*> edge_map;
 	        int nodos_visitados=0;
 	        Graph PrimGraph(nodes);
@@ -411,7 +419,7 @@ class Graph {
 				// si hay algun vertice no visitado, agregarlo al stack y continuar busqueda
 				auto it = actual->edges.begin();
 				while (it!=actual->edges.end()){
-					if (visitados.find((*it)->nodes[1])==visitados.end()){
+					if (visitados.find((*it)->nodes[1])==visitados.end()){ // not found
 						if(isbipartite) (*it)->nodes[1]->thereis = !(*it)->nodes[0]->thereis;
 						pila_stack.push((*it)->nodes[1]);
 						actual = pila_stack.top();
@@ -424,7 +432,7 @@ class Graph {
 					++it;
 				}
 				
-				if (pila_stack.top()==actual){ 
+				if (pila_stack.top()==actual){
 					pila_stack.pop();
 				}
 			}
