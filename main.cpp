@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
    cout<<"\n\nConexo: "<<mygraph.isconexo()<<endl;
    cout<<"\nFuertemente conexo (0 undirected) : "<<mygraph.is_fuertemente_conexo();
    cout<<"\nCompleto: "<<mygraph.is_completo();
-*/
+
     graph mygraph3(7);
     mygraph3.add_edge("A","D",9,0);
     mygraph3.add_edge("D","E",4,0);
@@ -107,8 +107,22 @@ int main(int argc, char *argv[]) {
     mygraph3.PrimAlgorithm("A",1);
     mygraph3.PrimAlgorithm("A",1).print();
 
-
-
+*/
+    graph dij(8);
+    dij.add_edge(0,2,4,0);
+    dij.add_edge(0,5,7,0);
+    dij.add_edge(2,3,3,0);
+    dij.add_edge(2,5,2,0);
+    dij.add_edge(5,6,8,0);
+    dij.add_edge(2,6,9,0);
+    dij.add_edge(3,4,3,0);
+    dij.add_edge(3,6,7,0);
+    dij.add_edge(6,4,2,0);
+    dij.add_edge(6,7,3,0);
+    dij.add_edge(4,7,7,0);
+    dij.add_edge(7,1,3,0);
+    dij.add_edge(4,1,4,0);
+    dij.GreedyBFS(0, 2,1);
 
 
 

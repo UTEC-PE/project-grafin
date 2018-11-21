@@ -477,6 +477,44 @@ class Graph {
 		    }
 		    return lista;
 		};
+		self GreedyBFS(N dataof, N nodofinal,bool print=false){
+			//if (has_direction) throw "";
+			MakeAllThereisFalse();
+
+			multimap< E ,edge*> edge_map;
+			int nodos_visitados=0;
+			Graph GreedyBFSgraph(nodes);
+
+			++nodos_visitados;
+			nodes[dataof]->thereis=true;
+			for(auto it3=nodes[dataof]->edges.begin();it3!=nodes[dataof]->edges.end();++it3){
+				edge_map.insert(pair <E, edge*>((*it3)->get_peso(), *it3));
+				//cout<<(*it3)->nodes[1]->get_data()<<"| "<<(*it3)->get_peso()<<endl;
+			}
+
+			while(nodes[nodofinal]->thereis==false){
+				edge* aux_edge=edge_map.begin()->second;
+				//cout<<"maybe next edge pair : "<<aux_edge->nodes[0]->get_data()<<","<<aux_edge->nodes[1]->get_data()<<"||"<<endl;
+				edge_map.erase(edge_map.begin());
+				if(!aux_edge->nodes[1]->thereis){
+					//cout<<"si"<<endl;
+					aux_edge->nodes[1]->thereis=true;
+					if(print) {
+						cout<<aux_edge->nodes[0]->get_data()<<","<<aux_edge->nodes[1]->get_data()<<"||"<<endl;
+					}
+
+					GreedyBFSgraph.add_edge((aux_edge)->nodes[0]->get_data(),(aux_edge)->nodes[1]->get_data(),(aux_edge)->get_peso(),0);
+					for(auto it3=aux_edge->nodes[1]->edges.begin();it3!=aux_edge->nodes[1]->edges.end();++it3){
+						//cout<<"edges++"<<endl;
+						edge_map.insert(pair <E, edge*>( (*it3)->get_peso(), *it3));
+					}
+					++nodos_visitados;
+				}
+			}
+			MakeAllThereisFalse();
+
+			return GreedyBFSgraph;
+		}
 
 	    vector<N> BFS(N nodo_data_inicial){
 			if (!(nodes.count(nodo_data_inicial)))throw "Nodo no existe";
