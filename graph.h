@@ -18,6 +18,8 @@
 #include "node.h"
 #include "edge.h"
 
+int const INFINITE=INT16_MAX;
+
 using namespace std;
 
 struct Traits {
@@ -394,6 +396,151 @@ class Graph {
 
 			return PrimGraph;
 	    };
+
+
+	list<map<N,int>>Dijkstra(N dataof, bool print=false){
+		MakeAllThereisFalse();
+		list<map<N,int>> Dlist;
+		map<N, int> Dmap; // nodos , peso
+		// lleno todos con infinito y el nodo de inicio con 0
+		for(auto it=nodes.begin();it!=nodes.end();++it){
+			Dmap.insert(pair <N,int> (it->first,INFINITE));
+		}
+		Dmap[dataof]=0;
+		N wherei=dataof;
+		nodes[dataof]->thereis=true;
+		Dlist.push_back(Dmap);
+
+		int nodos_visitados=0;
+
+		// poner los valores
+		//multimap<int, N> node_map ;
+		//inserto todos los pesos del 1er nodo
+		for(auto it=nodes[dataof]->edges.begin();it!=nodes[dataof]->edges.end();++it) {
+			Dmap[(*it)->nodes[1]->get_data()] = (*it)->get_peso();
+		}
+		Dlist.push_back(Dmap);
+		nodos_visitados++;
+
+		//--------------------SECOND PART ------------------------------------
+		while(nodos_visitados!=nodes.size()){
+			wherei=BusquedaMap(Dmap);
+			//cambio el nodo donde estoy por el menor no visitado
+			nodes[wherei]->thereis=true;
+			for(auto it=nodes[wherei]->edges.begin();it!=nodes[wherei]->edges.end();++it){
+				//agrego los edges de wherei
+				if((*it)->get_peso()+Dmap[wherei] < Dmap[(*it)->nodes[1]->get_data()]){
+					//la suma del edge desde el nodo donde estoy es menor que el que esta en el mapa, lo cambio
+					Dmap[(*it)->nodes[1]->get_data()] = (*it)->get_peso()+Dmap[wherei];
+				}
+			}
+			Dlist.push_back(Dmap);
+			nodos_visitados++;
+			if(print){
+				cout<<endl<<"vec: "<<endl;
+				for(auto it=Dmap.begin();it!=Dmap.end();++it){
+					cout<<it->first<<"||"<<it->second<<endl;
+				}
+			}
+		}
+		MakeAllThereisFalse();
+		return Dlist;
+	}
+
+	N BusquedaMap(map <N,int> ElMapa ){
+		int menor=INFINITE ;
+		N nodo;
+		for(auto it=ElMapa.begin();it!=ElMapa.end();++it){
+			if((it->second< menor)&&(!nodes[it->first]->thereis)){
+				menor=it->second;
+				nodo= it->first;
+			}
+		}
+		return nodo;
+
+	}
+	map<N, int> Dijkstra3(N dataof){
+		MakeAllThereisFalse();
+		map<N, int> Dmap; // nodos , peso
+		multimap<int, N> node_map ;
+
+
+		for(auto it=nodes.begin();it!=nodes.end();++it){
+			Dmap.insert(pair <N,int> (it->first,INT16_MAX));
+		}
+		Dmap[dataof]=0;
+		nodes[dataof]->thereis=true;
+
+		int nodos_visitados=1;
+		int count_camino=0;
+
+		// poner los valores
+		int menor=INT16_MAX;
+		for(auto it=nodes[dataof]->edges.begin();it!=nodes[dataof]->edges.end();++it) {
+			cout << endl << (*it)->nodes[1]->get_data() << "| " << (*it)->get_peso();
+			Dmap[(*it)->nodes[1]->get_data()] = (*it)->get_peso();
+			nodos_visitados++;
+			node_map.insert(pair <int, N>( (*it)->get_peso(), (*it)->nodes[1]->get_data() ));
+		}
+
+
+		//while(nodos_visitados!=nodes.size()) {
+		auto some = node_map.begin();
+		node_map.erase(node_map.begin());
+		if (!nodes[some->second]->thereis) {
+			nodos_visitados++;
+			count_camino=count_camino+ some->first;
+
+
+			for(auto it=nodes[some->second]->edges.begin();it!=nodes[some->second]->edges.end();++it) {
+				cout << endl << (*it)->nodes[1]->get_data() << "| " << (*it)->get_peso();
+				Dmap[(*it)->nodes[1]->get_data()] = (*it)->get_peso();
+				nodos_visitados++;
+				node_map.insert(pair <int, N>( (*it)->get_peso(), (*it)->nodes[1]->get_data() ));
+
+
+				if (((*it)->get_peso() < menor)&&(!(*it)->nodes[1]->thereis)) {
+					menor = (*it)->get_peso();
+				}
+			}
+
+
+
+		}
+		//}
+
+		cout<<endl<<"vec: "<<menor<<endl;
+		for(auto it=Dmap.begin();it!=Dmap.end();++it){
+			cout<<it->first<<"||"<<it->second<<endl;
+		}
+		MakeAllThereisFalse();
+		return Dmap;
+	}
+
+
+	void Dijkstra2(N dataof){
+		MakeAllThereisFalse();
+		//cambiat int por E
+		int n=sizeOfGraph[0];
+		int DM[n];
+		DM[dataof]=0;
+		nodes[dataof]->thereis=true;
+		int nodos_visitados=1;
+		int count_camino=0;
+
+		for(auto it=nodes[dataof]->edges.begin();it!=nodes[dataof]->edges.end();++it) {
+			DM[(*it)->nodes[1]->get_data()] = (*it)->get_peso();
+			cout << endl << (*it)->nodes[1]->get_data() << "| " << (*it)->get_peso();
+		}
+
+		cout<<endl<<"vec: "<<endl;
+		for(int i=0;i<n;++i){
+			cout<<DM[i]<<"  ";
+		}
+		MakeAllThereisFalse();
+
+
+	}
 
 	    void print_DFS(vector<pair<N, N>> v) {
 	    	int c=0;
