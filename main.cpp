@@ -106,7 +106,12 @@ int main(int argc, char *argv[]) {
     mygraph3.add_edge("B","C",4,0);
     mygraph3.PrimAlgorithm("A",1);
     mygraph3.PrimAlgorithm("A",1).print();
+
+
 */
+
+    cout << "------------- Graph test 4 (Dijkstra y GreedyBFS) -------------\n";
+
     graph dij(8);
     dij.add_edge(0,2,4,0);
     dij.add_edge(0,5,7,0);
@@ -120,10 +125,14 @@ int main(int argc, char *argv[]) {
     dij.add_edge(6,7,3,0);
     dij.add_edge(4,7,7,0);
     dij.add_edge(7,1,3,0);
+
+    /*
     dij.add_edge(4,1,9,0);
     dij.Dijkstra(0,1);
+    */
 
-
+    dij.add_edge(4,1,4,0);
+    dij.GreedyBFS(0, 2,1);
 
 
 
