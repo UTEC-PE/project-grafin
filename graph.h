@@ -108,10 +108,11 @@ class Graph {
         
         int sizeOfGraph[2]= {0,0}; // sizeOfGraph[0]: num de nodes -  sizeOfGraph[1]: num de edges
 
-	    Graph(NodeSeq somenodes){ // Nuevo grafo a partir de data de vector de nodos
+	    Graph(NodeSeq somenodes, bool with_coord=false){ // Nuevo grafo a partir de data de vector de nodos
 	    	node* newnode;
 	    	for (auto pairNodes : somenodes){
-	    		add_node(pairNodes.first);
+                if (with_coord) add_node(pairNodes.first, pairNodes.second->x, pairNodes.second->y);
+                else add_node(pairNodes.first);
 	        }
 	    };
 
@@ -212,9 +213,9 @@ class Graph {
 
 
 		// Metodos fundamentales
-		bool add_node(N node_name){
+		bool add_node(N node_name, double x=0, double y=0){
 			if (nodes.find(node_name)!=nodes.end()) return false; // name taken
-			node* newnode = new node(node_name);
+			node* newnode = new node(node_name, x, y);
 			nodes.insert(pair<N, node*> (node_name, newnode));
 			++sizeOfGraph[0];
 			return true;

@@ -26,18 +26,20 @@ class Read {
 	public:
 		Read(string file) : filename(file){
 			string line;
-			int nodes, dir, weight;
+			int nodes, weight, x=0, y=0;
+            bool dir, withcoor;
 			N node_name, vi, vf;
 
 			thefile.open(filename);
             if (!thefile.is_open()) throw "Could't open the file";
             
-            thefile >> nodes;
-            thefile >> dir;
+            thefile >> nodes; // first line
+            thefile >> dir;   // second line
+            thefile >> withcoor; // third line
 
             thefile.ignore(256, '\n');
             streampos bookmark = thefile.tellg();
-            getline(thefile, line, '\n'); // read third line
+            getline(thefile, line, '\n'); // read fourth line
 
             thefile.seekg(bookmark);
 
@@ -45,7 +47,8 @@ class Read {
             	theGraph = new graph;
             	for (int i=0; i<nodes;++i){
             		thefile >> node_name;
-            		theGraph->add_node(node_name);
+                    if (withcoor) thefile >> x >> y;
+            		theGraph->add_node(node_name, x, y);
             	}
             }
             else {theGraph = new graph(nodes);}
