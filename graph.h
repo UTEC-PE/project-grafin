@@ -87,6 +87,31 @@ struct disjointSet {
 };
 typedef disjointSet<Traits> DisjointSet;
 
+template <typename Ma>
+struct SquareMatrix {
+    vector<vector<Ma>> M;
+
+    SquareMatrix(){};
+    SquareMatrix(int size, Ma thedefault){
+        vector<Ma> temp(size, thedefault);
+        for (int i=0; i<size; ++i) M.push_back(temp);
+    }
+    
+    void set(int r, int c, Ma value){ M[r][c]=value; }
+    Ma get(int r, int c) { return M[r][c]; }
+    int size(){ return M.size(); }
+    void print(){
+        cout <<endl;
+        for (int i=0; i<M.size(); ++i){
+            for (int j=0; j<M.size(); ++j){
+                if (M[i][j]==INFINITE) cout <<"INF ";
+                else cout << M[i][j] <<" ";
+            }
+            cout << endl;
+        }
+    }
+};
+
 template <typename Tr>
 class Graph {
     public:
@@ -106,36 +131,6 @@ class Graph {
         EdgeSeq edges_graph; // usado en fuertemente conexo
         
         int sizeOfGraph[2]= {0,0}; // sizeOfGraph[0]: num de nodes -  sizeOfGraph[1]: num de edges
-
-        struct squareMatrixPair {
-            vector<vector<int>> distances;
-            vector<vector<int>> direct_connections(this->sizeOfGraph[0], vector<int>(sizeOfGraph[0], INFINITE));
-
-            unordered_map<N, int> nodename_to_id;
-            unordered_map<int, N> id_to_nodename;
-
-            squareMatrixPair(){
-                // Fill distances (diagonal=0)
-                vector<int> nodes_name;
-                transform(nodes.begin(), nodes.end(), back_inserter(nodes_name), [](pair<int, int> p) { return p.first;} );
-                for (int i=0; i<sizeOfGraph[0]; ++i){
-                    distances.push_back(nodes_name);
-                    distances[i][i] = 0;
-                }
-
-                // Fill nodename-id maps
-                int c=0;
-                for (auto& thenode: nodes){
-                    nodename_to_id[thenode.first] = c;
-                    id_to_nodename[c] = thenode.first;
-                }
-            }
-            int mDistances(N node1, N node2) {return distances[nodename_to_id[node1]][nodename_to_id[node2]];}
-            void mDistances(N node1, N node2, int number) {distances[nodename_to_id[node1]][nodename_to_id[node2]] = number;}
-            int mInitialPaths(N node1, N node2) {return initial_paths[nodename_to_id[node1]][nodename_to_id[node2]];}
-        };
-
-
 
 	    Graph(NodeSeq somenodes){ // Nuevo grafo a partir de data de vector de nodos
 	    	node* newnode;
@@ -621,25 +616,59 @@ class Graph {
 		    }
 		    return nueva_lista;
 		}
+//  pair<SquareMatrix<int>,SquareMatrix<int>>
+        pair<SquareMatrix<int>,SquareMatrix<int>> floydWarshall(){
+            unordered_map<N, int> nodename_to_id;
+            unordered_map<int, N> id_to_nodename;
 
-        squareMatrixPair floydWarshall(){
-            squareMatrixPair matrices;
+             // Fill nodename-id maps
+            int c=0;
             for (auto& thenode: nodes){
-                for (auto& theedge : thenode.second->edges)
-                    matrices.mDistances(theedge->nodes[0]->get_data(), theedge->nodes[1]->get_data(), theedge->get_peso());
+                nodename_to_id[thenode.first] = c;
+                id_to_nodename[c++] = thenode.first;
+            }
+            
+
+            // Fill distances
+            SquareMatrix<int> distances(sizeOfGraph[0], INFINITE);
+
+            for (auto& thenode: nodes){
+                for (auto& theedge: thenode.second->edges){
+                    // cout <<"Set " << nodename_to_id[thenode.first] << " " <<  nodename_to_id[theedge->nodes[1]->get_data()] <<endl;
+                    distances.set(nodename_to_id[thenode.first],
+                                           nodename_to_id[theedge->nodes[1]->get_data()],
+                                           theedge->get_peso());
+                }
+            }
+           
+           
+            // Initialize steps
+            SquareMatrix<int> steps;
+            c=0;
+            vector<int> temp;
+            for (int i=0; i<sizeOfGraph[0]; ++i) temp.push_back(c++);
+            for (int i=0; i<sizeOfGraph[0]; ++i) steps.M.push_back(temp);
+
+
+            // Fill diagonal of both matrices with zeros
+            for(int i=0; i<sizeOfGraph[0]; ++i){
+                steps.set(i, i, 0);
+                distances.set(i, i, 0);
             }
 
-            for (auto& k_node: nodes){
-                for (auto& i_node: nodes){
-                    for (auto& j_node: nodes){
-                        // if m[i][j] > m[i][k] + dist[k][j]:
-                        //     if m[i][j] =  m[i][k] + dist[k][j]
-                        // means... m[i][j] = min(m[i][j], m[i][k] + dist[k][j])
-                        matrices.mDistances(i_node, j_node, min(distance, matrices.mDistances(i_node, k_node)));
+ 
+            for (int k=0; k<steps.size(); ++k){
+                for (int i=0; i<steps.size(); ++i){
+                    for (int j=0; j<steps.size(); ++j){
+                        if(distances.get(i, j) > distances.get(i,k)+distances.get(k,j)){
+                            distances.set(i, j, distances.get(i,k)+distances.get(k,j));
+                            steps.set(i, j, k);
+                        }
                     }
                 }
             }
-            return matrices;
+
+            return make_pair(steps, distances);
         }
 
 		~Graph(){
