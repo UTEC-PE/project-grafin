@@ -85,8 +85,32 @@ struct disjointSet {
 		for (auto&  node: nodename_to_id) cout << "\nNode: " << node.first << "\tSet: " << sets[node.second].set << "\tParent: " << node.second;
 	}
 };
-
 typedef disjointSet<Traits> DisjointSet;
+
+template <typename Ma>
+struct SquareMatrix {
+    vector<vector<Ma>> M;
+
+    SquareMatrix(){};
+    SquareMatrix(int size, Ma thedefault){
+        vector<Ma> temp(size, thedefault);
+        for (int i=0; i<size; ++i) M.push_back(temp);
+    }
+    
+    void set(int r, int c, Ma value){ M[r][c]=value; }
+    Ma get(int r, int c) { return M[r][c]; }
+    int size(){ return M.size(); }
+    void print(){
+        cout <<endl;
+        for (int i=0; i<M.size(); ++i){
+            for (int j=0; j<M.size(); ++j){
+                if (M[i][j]==INFINITE) cout <<"INF ";
+                else cout << M[i][j] <<" ";
+            }
+            cout << endl;
+        }
+    }
+};
 
 template <typename Tr>
 class Graph {
@@ -399,67 +423,67 @@ class Graph {
 	    };
 
 
-	list<map<N,int>>Dijkstra(N dataof, bool print=false){
-		MakeAllThereisFalse();
-		list<map<N,int>> Dlist;
-		map<N, int> Dmap; // nodos , peso
-		// lleno todos con infinito y el nodo de inicio con 0
-		for(auto it=nodes.begin();it!=nodes.end();++it){
-			Dmap.insert(pair <N,int> (it->first,INFINITE));
-		}
-		Dmap[dataof]=0;
-		N wherei=dataof;
-		nodes[dataof]->thereis=true;
-		Dlist.push_back(Dmap);
+    	list<map<N,int>>Dijkstra(N dataof, bool print=false){
+    		MakeAllThereisFalse();
+    		list<map<N,int>> Dlist;
+    		map<N, int> Dmap; // nodos , peso
+    		// lleno todos con infinito y el nodo de inicio con 0
+    		for(auto it=nodes.begin();it!=nodes.end();++it){
+    			Dmap.insert(pair <N,int> (it->first,INFINITE));
+    		}
+    		Dmap[dataof]=0;
+    		N wherei=dataof;
+    		nodes[dataof]->thereis=true;
+    		Dlist.push_back(Dmap);
 
-		int nodos_visitados=0;
+    		int nodos_visitados=0;
 
-		// poner los valores
-		//multimap<int, N> node_map ;
-		//inserto todos los pesos del 1er nodo
-		for(auto it=nodes[dataof]->edges.begin();it!=nodes[dataof]->edges.end();++it) {
-			Dmap[(*it)->nodes[1]->get_data()] = (*it)->get_peso();
-		}
-		Dlist.push_back(Dmap);
-		nodos_visitados++;
+    		// poner los valores
+    		//multimap<int, N> node_map ;
+    		//inserto todos los pesos del 1er nodo
+    		for(auto it=nodes[dataof]->edges.begin();it!=nodes[dataof]->edges.end();++it) {
+    			Dmap[(*it)->nodes[1]->get_data()] = (*it)->get_peso();
+    		}
+    		Dlist.push_back(Dmap);
+    		nodos_visitados++;
 
-		//--------------------SECOND PART ------------------------------------
-		while(nodos_visitados!=nodes.size()){
-			wherei=BusquedaMap(Dmap);
-			//cambio el nodo donde estoy por el menor no visitado
-			nodes[wherei]->thereis=true;
-			for(auto it=nodes[wherei]->edges.begin();it!=nodes[wherei]->edges.end();++it){
-				//agrego los edges de wherei
-				if((*it)->get_peso()+Dmap[wherei] < Dmap[(*it)->nodes[1]->get_data()]){
-					//la suma del edge desde el nodo donde estoy es menor que el que esta en el mapa, lo cambio
-					Dmap[(*it)->nodes[1]->get_data()] = (*it)->get_peso()+Dmap[wherei];
-				}
-			}
-			Dlist.push_back(Dmap);
-			nodos_visitados++;
-			if(print){
-				cout<<endl<<"vec: "<<endl;
-				for(auto it=Dmap.begin();it!=Dmap.end();++it){
-					cout<<it->first<<"||"<<it->second<<endl;
-				}
-			}
-		}
-		MakeAllThereisFalse();
-		return Dlist;
-	}
+    		//--------------------SECOND PART ------------------------------------
+    		while(nodos_visitados!=nodes.size()){
+    			wherei=BusquedaMap(Dmap);
+    			//cambio el nodo donde estoy por el menor no visitado
+    			nodes[wherei]->thereis=true;
+    			for(auto it=nodes[wherei]->edges.begin();it!=nodes[wherei]->edges.end();++it){
+    				//agrego los edges de wherei
+    				if((*it)->get_peso()+Dmap[wherei] < Dmap[(*it)->nodes[1]->get_data()]){
+    					//la suma del edge desde el nodo donde estoy es menor que el que esta en el mapa, lo cambio
+    					Dmap[(*it)->nodes[1]->get_data()] = (*it)->get_peso()+Dmap[wherei];
+    				}
+    			}
+    			Dlist.push_back(Dmap);
+    			nodos_visitados++;
+    			if(print){
+    				cout<<endl<<"vec: "<<endl;
+    				for(auto it=Dmap.begin();it!=Dmap.end();++it){
+    					cout<<it->first<<"||"<<it->second<<endl;
+    				}
+    			}
+    		}
+    		MakeAllThereisFalse();
+    		return Dlist;
+    	}
 
-	N BusquedaMap(map <N,int> ElMapa ){
-		int menor=INFINITE ;
-		N nodo;
-		for(auto it=ElMapa.begin();it!=ElMapa.end();++it){
-			if((it->second< menor)&&(!nodes[it->first]->thereis)){
-				menor=it->second;
-				nodo= it->first;
-			}
-		}
-		return nodo;
+    	N BusquedaMap(map <N,int> ElMapa ){
+    		int menor=INFINITE ;
+    		N nodo;
+    		for(auto it=ElMapa.begin();it!=ElMapa.end();++it){
+    			if((it->second< menor)&&(!nodes[it->first]->thereis)){
+    				menor=it->second;
+    				nodo= it->first;
+    			}
+    		}
+    		return nodo;
 
-	}
+    	}
 
 	    void print_DFS(vector<pair<N, N>> v) {
 	    	int c=0;
@@ -593,6 +617,60 @@ class Graph {
 		    }
 		    return nueva_lista;
 		}
+//  pair<SquareMatrix<int>,SquareMatrix<int>>
+        pair<SquareMatrix<int>,SquareMatrix<int>> floydWarshall(){
+            unordered_map<N, int> nodename_to_id;
+            unordered_map<int, N> id_to_nodename;
+
+             // Fill nodename-id maps
+            int c=0;
+            for (auto& thenode: nodes){
+                nodename_to_id[thenode.first] = c;
+                id_to_nodename[c++] = thenode.first;
+            }
+            
+
+            // Fill distances
+            SquareMatrix<int> distances(sizeOfGraph[0], INFINITE);
+
+            for (auto& thenode: nodes){
+                for (auto& theedge: thenode.second->edges){
+                    // cout <<"Set " << nodename_to_id[thenode.first] << " " <<  nodename_to_id[theedge->nodes[1]->get_data()] <<endl;
+                    distances.set(nodename_to_id[thenode.first],
+                                           nodename_to_id[theedge->nodes[1]->get_data()],
+                                           theedge->get_peso());
+                }
+            }
+           
+           
+            // Initialize steps
+            SquareMatrix<int> steps;
+            c=0;
+            vector<int> temp;
+            for (int i=0; i<sizeOfGraph[0]; ++i) temp.push_back(c++);
+            for (int i=0; i<sizeOfGraph[0]; ++i) steps.M.push_back(temp);
+
+
+            // Fill diagonal of both matrices with zeros
+            for(int i=0; i<sizeOfGraph[0]; ++i){
+                steps.set(i, i, 0);
+                distances.set(i, i, 0);
+            }
+
+ 
+            for (int k=0; k<steps.size(); ++k){
+                for (int i=0; i<steps.size(); ++i){
+                    for (int j=0; j<steps.size(); ++j){
+                        if(distances.get(i, j) > distances.get(i,k)+distances.get(k,j)){
+                            distances.set(i, j, distances.get(i,k)+distances.get(k,j));
+                            steps.set(i, j, k);
+                        }
+                    }
+                }
+            }
+
+            return make_pair(steps, distances);
+        }
 
 		~Graph(){
 			auto it = nodes.begin();
