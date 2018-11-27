@@ -616,31 +616,24 @@ class Graph {
 		    }
 		    return nueva_lista;
 		}
-//  pair<SquareMatrix<int>,SquareMatrix<int>>
+
         pair<SquareMatrix<int>,SquareMatrix<int>> floydWarshall(){
             unordered_map<N, int> nodename_to_id;
-            unordered_map<int, N> id_to_nodename;
 
              // Fill nodename-id maps
             int c=0;
             for (auto& thenode: nodes){
-                nodename_to_id[thenode.first] = c;
-                id_to_nodename[c++] = thenode.first;
+                nodename_to_id[thenode.first] = c++;
             }
-            
 
             // Fill distances
             SquareMatrix<int> distances(sizeOfGraph[0], INFINITE);
 
-            for (auto& thenode: nodes){
-                for (auto& theedge: thenode.second->edges){
-                    // cout <<"Set " << nodename_to_id[thenode.first] << " " <<  nodename_to_id[theedge->nodes[1]->get_data()] <<endl;
+            for (auto& thenode: nodes)
+                for (auto& theedge: thenode.second->edges)
                     distances.set(nodename_to_id[thenode.first],
                                            nodename_to_id[theedge->nodes[1]->get_data()],
                                            theedge->get_peso());
-                }
-            }
-           
            
             // Initialize steps
             SquareMatrix<int> steps;
