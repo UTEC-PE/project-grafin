@@ -16,6 +16,7 @@
 #include <map>
 #include <unordered_map>
 #include <set>
+#include <cmath>
 
 #include "node.h"
 #include "edge.h"
@@ -445,7 +446,7 @@ class Graph {
 
     		// poner los valores
     		//multimap<int, N> node_map ;
-    		//inserto todos los pesos del 1er nodo
+    		//inserto todos los distancia del 1er nodo
     		for(auto it=nodes[dataof]->edges.begin();it!=nodes[dataof]->edges.end();++it) {
     			Dmap[(*it)->nodes[1]->get_data()] = (*it)->get_peso();
     		}
@@ -694,12 +695,10 @@ class Graph {
             bool change=true;
             for (int i=0; i<distances.size(); ++i){
                 for (auto& thenode: nodes){
-                    // cout << "\nNode: " << thenode.first;
                     for (auto& theedge: thenode.second->edges){
                         N nbegin = theedge->nodes[0]->get_data();
                         N nend = theedge->nodes[1]->get_data();
                         if (distances[nbegin] + theedge->get_peso() < distances[nend]){
-                            // cout <<"\nChange";
                             change = true;
                             distances[nend] = distances[nbegin] + theedge->get_peso();
                         }
@@ -713,6 +712,63 @@ class Graph {
             
             return distances;
         }
+
+        self A_asterisco(N initial_node, N final_node, bool print=false){
+            self ans(nodes); // grafo que almacenara el camino
+
+            // Setear heuristicas de todos los nodos
+            map<N, double> heuristica;
+            for (auto& thenode: nodes) 
+                heuristica[thenode.first] = 
+                    sqrt(pow(thenode.second->x - nodes[final_node]->x, 2) +
+                        pow(thenode.second->y - nodes[final_node]->y, 2));
+
+            // por_visitar = (node_name, heuristica+distancia)
+            // la distancia del primer nodo es 0, solo se añade su heuristica
+            vector<pair<N, double>> por_visitar = {pair<N, int>(initial_node, heuristica[initial_node])};
+            map<N, int> distancia = {pair<N, int>(initial_node, 0)};
+
+            // mientras que encuentre final_node y no este vacio
+            while (!por_visitar.empty() && distancia.find(final_node)==distancia.end()){
+                sort(por_visitar.begin(), por_visitar.end(), [](auto &left, auto &right){
+                                        return left.second < right.second;
+                                    });
+                 
+                // Seleccionar nodo con menor heuristica+distancia
+                N selected_node = por_visitar[0].first;
+                por_visitar.erase(por_visitar.begin());
+
+                // Recorrer los edges del nodo seleccionado
+                for (auto& theedge: nodes[selected_node]->edges){
+                    N nodo_anadir = theedge->nodes[1]->get_data();
+                    if (distancia.insert(make_pair(nodo_anadir, distancia[selected_node]+theedge->get_peso() )).second){
+                        // si el elemento no estaba en el mapa, añadir a por_visitar
+                        // y al grafo answer
+                        por_visitar.push_back( make_pair(nodo_anadir, heuristica[nodo_anadir]+distancia[nodo_anadir]));
+                        if (print) {
+                            cout << "\nNodo " << selected_node << " -> Nodo " <<nodo_anadir;
+                            if (nodo_anadir==final_node) cout << " *** Camino correcto";
+                        }    
+                    }
+                    else if ( distancia[nodo_anadir] > distancia[selected_node]+theedge->get_peso() ){
+                        distancia[nodo_anadir] = distancia[selected_node]+theedge->get_peso();
+                    }
+                    ans.add_edge(*theedge);
+                    // cout << "Stuck in for";
+                }
+                // cout << "Stuck in while";
+            }
+
+            // Si no se encontro un camino, devolver el mismo grafo sin edges
+            if (distancia.empty()) {
+                if (print) cout <<"\nNo existe un camino";
+                self nulo(nodes);
+                return nulo;
+            }
+            
+            return ans;
+        }    
+        
 
 		~Graph(){
 			auto it = nodes.begin();
