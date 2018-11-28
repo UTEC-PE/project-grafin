@@ -754,16 +754,12 @@ class Graph {
                         distancia[nodo_anadir] = distancia[selected_node]+theedge->get_peso();
                     }
                     ans.add_edge(*theedge);
-                    // cout << "Stuck in for";
                 }
-                // cout << "Stuck in while";
             }
 
             // Si no se encontro un camino, devolver el mismo grafo sin edges
-            if (distancia.empty()) {
+            if (por_visitar.empty()) {
                 if (print) cout <<"\nNo existe un camino";
-                self nulo(nodes);
-                return nulo;
             }
             
             return ans;
