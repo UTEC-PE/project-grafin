@@ -5,7 +5,9 @@
 #define GRAPH_H
 
 #include <iostream>
+#include <iomanip>
 #include <algorithm>
+#include <utility>
 
 #include <vector>
 #include <list>
@@ -23,7 +25,7 @@ int const INFINITE=INT16_MAX;
 using namespace std;
 
 struct Traits {
-	typedef string N;
+	typedef int N;
 	typedef int E;
 };
 
@@ -93,7 +95,7 @@ struct SquareMatrix {
 
     SquareMatrix(){};
     SquareMatrix(int size, Ma thedefault){
-        vector<Ma> temp(size, thedefault);
+        vector<Ma> temp(size, thedefault); 
         for (int i=0; i<size; ++i) M.push_back(temp);
     }
     
@@ -104,8 +106,8 @@ struct SquareMatrix {
         cout <<endl;
         for (int i=0; i<M.size(); ++i){
             for (int j=0; j<M.size(); ++j){
-                if (M[i][j]==INFINITE) cout <<"INF ";
-                else cout << M[i][j] <<" ";
+                if (M[i][j]==INFINITE) cout << setw(6) <<"INF";
+                else cout << setw(6) << M[i][j];
             }
             cout << endl;
         }
@@ -424,14 +426,11 @@ class Graph {
 
 
     	list<map<N,int>>Dijkstra(N dataof, bool print=false){
-            for (thestate: states){
-                if (thestate.second->transitions &&
-                    thestate.second->transitions[0]->get_peso()<0)
-                    throw "Negative edge length detected in Dijkstra";
-            }
+            if (nodes.find(dataof)==nodes.end()) throw "No existe nodo";
 
     		MakeAllThereisFalse();
     		list<map<N,int>> Dlist;
+            int cuantos=this->DFS(dataof).size();
     		map<N, int> Dmap; // nodos , peso
     		// lleno todos con infinito y el nodo de inicio con 0
     		for(auto it=nodes.begin();it!=nodes.end();++it){
@@ -454,7 +453,7 @@ class Graph {
     		nodos_visitados++;
 
     		//--------------------SECOND PART ------------------------------------
-    		while(nodos_visitados!=nodes.size()){
+    		while(nodos_visitados!=cuantos){
     			wherei=BusquedaMap(Dmap);
     			//cambio el nodo donde estoy por el menor no visitado
     			nodes[wherei]->thereis=true;
@@ -574,8 +573,20 @@ class Graph {
 		    return lista;
 		};
 		self GreedyBFS(N dataof, N nodofinal,bool print=false){
+            if (nodes.find(dataof)==nodes.end() ||
+                nodes.find(nodofinal)==nodes.end()) throw "No existe nodo";
 			//if (has_direction) throw "";
 			MakeAllThereisFalse();
+            bool is=false;
+
+            vector<N> result_dfs =  this->BFS(dataof);
+            for (auto& el: result_dfs){
+                if(el==nodofinal){
+                    is=true;
+                }
+            }
+
+            if(!is) throw "No se puede llegar al nodo final";
 
 			multimap< E ,edge*> edge_map;
 			int nodos_visitados=0;
@@ -672,21 +683,29 @@ class Graph {
         }
 
         map<N, int> bellmanFord(N initial_node, bool print=false){
+            if (nodes.find(initial_node)==nodes.end()) throw "No existe nodo";
             if (!has_direction) throw "Bellman Ford solo aplica a dirigidos";
             map<N, int> distances;
              // Initialize distances with infinite
             for (auto& thenode: nodes) distances[thenode.first] = INFINITE;
             distances[initial_node] = 0;
 
+
+            bool change=true;
             for (int i=0; i<distances.size(); ++i){
                 for (auto& thenode: nodes){
+                    // cout << "\nNode: " << thenode.first;
                     for (auto& theedge: thenode.second->edges){
                         N nbegin = theedge->nodes[0]->get_data();
                         N nend = theedge->nodes[1]->get_data();
-                        if (distances[nbegin] + theedge->get_peso() < distances[nend])
+                        if (distances[nbegin] + theedge->get_peso() < distances[nend]){
+                            // cout <<"\nChange";
+                            change = true;
                             distances[nend] = distances[nbegin] + theedge->get_peso();
+                        }
                     }
                 }
+                change = false;
             }
 
             if (print)
