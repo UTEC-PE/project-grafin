@@ -424,6 +424,12 @@ class Graph {
 
 
     	list<map<N,int>>Dijkstra(N dataof, bool print=false){
+            for (thestate: states){
+                if (thestate.second->transitions &&
+                    thestate.second->transitions[0]->get_peso()<0)
+                    throw "Negative edge length detected in Dijkstra";
+            }
+
     		MakeAllThereisFalse();
     		list<map<N,int>> Dlist;
     		map<N, int> Dmap; // nodos , peso
