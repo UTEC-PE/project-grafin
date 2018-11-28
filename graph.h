@@ -23,7 +23,7 @@ int const INFINITE=INT16_MAX;
 using namespace std;
 
 struct Traits {
-	typedef int N;
+	typedef string N;
 	typedef int E;
 };
 
@@ -663,6 +663,30 @@ class Graph {
             }
 
             return make_pair(steps, distances);
+        }
+
+        map<N, int> bellmanFord(N initial_node, bool print=false){
+            if (!has_direction) throw "Bellman Ford solo aplica a dirigidos";
+            map<N, int> distances;
+             // Initialize distances with infinite
+            for (auto& thenode: nodes) distances[thenode.first] = INFINITE;
+            distances[initial_node] = 0;
+
+            for (int i=0; i<distances.size(); ++i){
+                for (auto& thenode: nodes){
+                    for (auto& theedge: thenode.second->edges){
+                        N nbegin = theedge->nodes[0]->get_data();
+                        N nend = theedge->nodes[1]->get_data();
+                        if (distances[nbegin] + theedge->get_peso() < distances[nend])
+                            distances[nend] = distances[nbegin] + theedge->get_peso();
+                    }
+                }
+            }
+
+            if (print)
+                for (auto& el: distances) cout << "\nDistance to " << el.first << " is " << el.second;
+            
+            return distances;
         }
 
 		~Graph(){
